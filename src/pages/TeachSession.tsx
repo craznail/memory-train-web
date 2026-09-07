@@ -102,10 +102,6 @@ export function TeachSession() {
 
       {session.phase === 'answering' && q && (
         <>
-          <GroupingHintPanel
-            chunks={paper.chunks}
-            visible={answeringPass === 'after'}
-          />
           <QuestionCard
             question={q}
             index={session.currentQ}
@@ -149,10 +145,10 @@ export function TeachSession() {
           <div className="card">
             <p style={{ fontWeight: 600 }}>第三步：带着分组提示再听</p>
             <p className="muted" style={{ marginTop: 6 }}>
-              播放时对照下方分组提示，把信息放进对应格子。
+              播放时对照下方维度标签归类记忆；答题时提示会收起，避免开卷。
             </p>
           </div>
-          <GroupingHintPanel chunks={paper.chunks} visible />
+          <GroupingHintPanel chunks={paper.chunks} visible mode="tagsOnly" />
           <PlayOnceBar
             phase={session.phase}
             playedOnce={false}
