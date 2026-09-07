@@ -58,11 +58,15 @@ export const METHODS: MethodDef[] = [
   {
     id: 'encoding',
     title: '信息编码',
-    subtitle: '即将开放',
+    subtitle: '把难记信息换成好记的代码',
     emoji: '🔢',
-    status: 'coming',
-    explain: [],
-    replayCues: [],
+    status: 'ready',
+    explain: [
+      '信息编码：把难记的数字、名单、条件，先换成你熟悉的「代码」或关键词，再记代码。',
+      '例如数字像形状：1→铅笔、2→鸭子；人名用特征词代替。回忆时先解码再还原。',
+    ],
+    replayCues: ['数字代码', '人名特征', '条件口诀', '顺序标记'],
+    example: '两份合同 → 「二」用鸭子；七点半 → 「早」用闹钟符号。先记符号再还原。',
   },
   {
     id: 'imagery',
