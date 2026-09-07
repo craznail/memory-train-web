@@ -17,7 +17,10 @@ export function TeachSession() {
   const { methodId = 'chunking' } = useParams();
   const method = getMethod(methodId);
 
-  const paper = useMemo(() => pickPaperByIndex(methodId === 'association' ? 1 : 0), [methodId]);
+  const paper = useMemo(() => {
+    const idx = methodId === 'association' ? 1 : methodId === 'story' ? 2 : 0;
+    return pickPaperByIndex(idx);
+  }, [methodId]);
   const session = useListenSession({
     paper,
     mode: 'teach',

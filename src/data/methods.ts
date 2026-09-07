@@ -45,11 +45,15 @@ export const METHODS: MethodDef[] = [
   {
     id: 'story',
     title: '故事串联',
-    subtitle: '即将开放',
+    subtitle: '把信息串成一条小故事',
     emoji: '📖',
-    status: 'coming',
-    explain: [],
-    replayCues: [],
+    status: 'ready',
+    explain: [
+      '故事串联：把要记的人、时间、地点、任务，按顺序编成一个有情节的小故事。',
+      '故事有开头、发展和结尾，顺序会跟着情节走，比单独硬背更稳。',
+    ],
+    replayCues: ['开头人物', '中间地点', '关键动作', '结尾结果'],
+    example: '先出现谁 → 去了哪 → 做了什么 → 最后怎样。把这四步讲成一句话故事。',
   },
   {
     id: 'encoding',

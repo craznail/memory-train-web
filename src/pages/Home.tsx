@@ -19,7 +19,7 @@ export function Home() {
       <div>
         <h1 className="page-title">听力记忆训练</h1>
         <p className="page-sub" style={{ marginTop: 4 }}>
-          测一测 · 学分组 · 练听力
+          测一测 · 学方法 · 练听力
         </p>
       </div>
 
