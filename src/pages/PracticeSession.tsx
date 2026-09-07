@@ -4,6 +4,7 @@ import { Layout } from '../components/Layout';
 import { PlayOnceBar } from '../components/PlayOnceBar';
 import { InterferenceCard } from '../components/InterferenceCard';
 import { QuestionCard } from '../components/QuestionCard';
+import { SessionStatusBar } from '../components/SessionStatusBar';
 import { pickPaper } from '../data/papers';
 import { useListenSession } from '../hooks/useListenSession';
 import { gradeAnswers, summarizePractice, isAnswerCorrect } from '../lib/scoring';
@@ -41,6 +42,12 @@ export function PracticeSession() {
 
   return (
     <Layout title="练听力">
+      <SessionStatusBar
+        phase={session.phase}
+        withInterference={session.withInterference}
+        showFeedback={feedbackMode}
+      />
+
       <div className="card" style={{ padding: '12px 16px' }}>
         <div className="muted">练习材料（不计分）</div>
         <div style={{ fontWeight: 700 }}>{paper.title}</div>

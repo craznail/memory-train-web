@@ -30,19 +30,20 @@ export function Home() {
           to="/test"
           emoji="📝"
           title="测听力"
-          subtitle="测评听觉记忆与抗干扰，更新记忆分"
+          subtitle="正式评分"
+          primary
         />
         <EntryCard
           to="/teach"
           emoji="📚"
           title="学分组"
-          subtitle="学习 Chunking 分组记忆法（不计分）"
+          subtitle="Chunking"
         />
         <EntryCard
           to="/practice"
           emoji="🎧"
           title="练听力"
-          subtitle="同形式自由练习，查看对错漏（不计分）"
+          subtitle="不改分"
         />
       </div>
     </Layout>

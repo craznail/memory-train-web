@@ -4,6 +4,7 @@ import { Layout } from '../components/Layout';
 import { PlayOnceBar } from '../components/PlayOnceBar';
 import { InterferenceCard } from '../components/InterferenceCard';
 import { QuestionCard } from '../components/QuestionCard';
+import { SessionStatusBar } from '../components/SessionStatusBar';
 import { PAPERS, pickPaperByIndex } from '../data/papers';
 import { useListenSession } from '../hooks/useListenSession';
 import { gradeAnswers, computeTestScore, isAnswerCorrect } from '../lib/scoring';
@@ -46,6 +47,12 @@ export function TestSession() {
 
   return (
     <Layout title="测听力">
+      <SessionStatusBar
+        phase={session.phase}
+        withInterference={session.withInterference}
+        showFeedback={showFb}
+      />
+
       <div className="card" style={{ padding: '12px 16px' }}>
         <div className="muted">本次试卷</div>
         <div style={{ fontWeight: 700 }}>{paper.title}</div>

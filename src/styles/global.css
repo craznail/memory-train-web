@@ -203,3 +203,80 @@ a {
 .step-dot.done {
   background: var(--color-primary);
 }
+
+/* PlayOnceBar states */
+.play-bar--playing {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1.5px solid rgba(59, 130, 246, 0.35);
+  animation: play-bar-pulse 1.6s ease-in-out infinite;
+}
+
+.play-bar--locked {
+  background: #F1F5F9;
+  opacity: 0.92;
+}
+
+.play-bar-btn--playing:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+@keyframes play-bar-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.28);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.06);
+  }
+}
+
+/* Test / Practice session status bar */
+.session-status-bar {
+  display: flex;
+  align-items: stretch;
+  gap: 4px;
+  background: var(--color-card);
+  border-radius: var(--radius-md);
+  padding: 8px 6px;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
+}
+
+.session-step {
+  flex: 1;
+  text-align: center;
+  padding: 6px 2px;
+  border-radius: 8px;
+  min-width: 0;
+}
+
+.session-step-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.session-step.active {
+  background: rgba(59, 130, 246, 0.12);
+}
+
+.session-step.active .session-step-label {
+  color: var(--color-primary);
+}
+
+.session-step.done .session-step-label {
+  color: var(--color-primary);
+  opacity: 0.7;
+}
+
+.session-step.skipped .session-step-label {
+  color: #CBD5E1;
+  text-decoration: none;
+  opacity: 0.55;
+  font-weight: 500;
+}
