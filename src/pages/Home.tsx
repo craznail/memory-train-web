@@ -4,14 +4,17 @@ import { Layout } from '../components/Layout';
 import { ScoreCard } from '../components/ScoreCard';
 import { EntryCard } from '../components/EntryCard';
 import { loadScoreHistory } from '../lib/storage';
+import { dailyProgressLabel, loadOrCreateDailyPlan } from '../lib/dailyTraining';
 import type { ScoreHistory } from '../types';
 
 export function Home() {
   const location = useLocation();
   const [history, setHistory] = useState<ScoreHistory>({ latest: null, history: [] });
+  const [dailySub, setDailySub] = useState('约10～15分钟');
 
   useEffect(() => {
     setHistory(loadScoreHistory());
+    setDailySub(dailyProgressLabel(loadOrCreateDailyPlan()));
   }, [location.key]);
 
   return (
@@ -26,6 +29,12 @@ export function Home() {
       <ScoreCard score={history.latest} />
 
       <div className="stack">
+        <EntryCard
+          to="/daily"
+          emoji="📅"
+          title="今日训练"
+          subtitle={dailySub}
+        />
         <EntryCard
           to="/test"
           emoji="📝"
