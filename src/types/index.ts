@@ -21,8 +21,10 @@ export interface ChunkHint {
 export interface Paper {
   id: string;
   title: string;
-  /** Full passage spoken by TTS */
+  /** Full passage text (TTS fallback + teaching) */
   passage: string;
+  /** Prefers local pre-recorded file; falls back to TTS if missing/error */
+  audioUrl?: string;
   /** Chunking groups for teach mode second listen */
   chunks: ChunkHint[];
   questions: Question[];

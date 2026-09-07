@@ -89,6 +89,7 @@ export function TeachSession() {
             </p>
           </div>
           <PlayOnceBar
+            playStatus={session.playStatus}
             phase={session.phase}
             playedOnce={session.playedOnce}
             onPlay={() => {
@@ -150,6 +151,7 @@ export function TeachSession() {
           </div>
           <GroupingHintPanel chunks={paper.chunks} visible mode="tagsOnly" />
           <PlayOnceBar
+            playStatus={session.playStatus}
             phase={session.phase}
             playedOnce={false}
             allowReplay

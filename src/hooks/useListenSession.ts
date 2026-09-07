@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Paper, SessionPhase, TrackMode } from '../types';
-import { speak, stopSpeaking } from '../lib/tts';
+import { playPassage, stopPlayback, type PlayStatus } from '../lib/audio';
 
 export interface UseListenSessionOptions {
   paper: Paper;
@@ -31,13 +31,14 @@ export function useListenSession({
   const [playedOnce, setPlayedOnce] = useState(false);
   const [teachPass, setTeachPass] = useState<1 | 2>(1);
   const [blindScoreHint, setBlindScoreHint] = useState<number | null>(null);
+  const [playStatus, setPlayStatus] = useState<PlayStatus>('idle');
 
   const paperIdRef = useRef(paper.id);
 
   useEffect(() => {
     if (paperIdRef.current !== paper.id) {
       paperIdRef.current = paper.id;
-      stopSpeaking();
+      stopPlayback();
       setPhase('ready');
       setAnswers({});
       setCurrentQ(0);
@@ -46,16 +47,21 @@ export function useListenSession({
       setPlayedOnce(false);
       setTeachPass(1);
       setBlindScoreHint(null);
+      setPlayStatus('idle');
     }
   }, [paper.id]);
 
-  useEffect(() => () => stopSpeaking(), []);
+  useEffect(() => () => stopPlayback(), []);
 
   const startPlay = useCallback(
     (isReplay = false) => {
       if (!isReplay && playedOnce && mode !== 'teach') return;
       setPhase(isReplay ? 'replaying' : 'playing');
-      speak(paper.passage, {
+      setPlayStatus('loading');
+      playPassage({
+        text: paper.passage,
+        audioUrl: paper.audioUrl,
+        onStatus: setPlayStatus,
         onEnd: () => {
           if (isReplay) {
             setPhase('answering');
@@ -72,7 +78,7 @@ export function useListenSession({
         },
       });
     },
-    [paper.passage, playedOnce, mode, withInterference],
+    [paper.passage, paper.audioUrl, playedOnce, mode, withInterference],
   );
 
   const submitInterference = useCallback(() => {
@@ -131,6 +137,7 @@ export function useListenSession({
     teachPass,
     blindScoreHint,
     withInterference,
+    playStatus,
     startPlay,
     submitInterference,
     nextQuestion,

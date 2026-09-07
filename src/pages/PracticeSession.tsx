@@ -55,6 +55,7 @@ export function PracticeSession() {
 
       {(session.phase === 'ready' || session.phase === 'playing') && (
         <PlayOnceBar
+            playStatus={session.playStatus}
           phase={session.phase}
           playedOnce={session.playedOnce}
           onPlay={() => session.startPlay(false)}

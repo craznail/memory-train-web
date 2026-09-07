@@ -1,3 +1,5 @@
+import type { PlayStatus } from '../lib/audio';
+
 interface Props {
   phase: string;
   playedOnce: boolean;
@@ -5,6 +7,7 @@ interface Props {
   label?: string;
   allowReplay?: boolean;
   hint?: string;
+  playStatus?: PlayStatus;
 }
 
 export function PlayOnceBar({
@@ -14,9 +17,12 @@ export function PlayOnceBar({
   label = '播放听力材料（仅一次）',
   allowReplay = false,
   hint,
+  playStatus = 'idle',
 }: Props) {
   const playing = phase === 'playing' || phase === 'replaying';
   const locked = playedOnce && !allowReplay && !playing;
+  const loading = playing && playStatus === 'loading';
+  const fallback = playing && playStatus === 'error';
   const disabled = playing || (playedOnce && !allowReplay);
 
   const barClass = [
@@ -28,6 +34,11 @@ export function PlayOnceBar({
     .filter(Boolean)
     .join(' ');
 
+  let buttonLabel = label;
+  if (loading) buttonLabel = '加载中…';
+  else if (playing) buttonLabel = '播放中…';
+  else if (locked) buttonLabel = '已播放（不可重听）';
+
   return (
     <div className={barClass}>
       <button
@@ -36,14 +47,19 @@ export function PlayOnceBar({
         disabled={disabled}
         onClick={onPlay}
       >
-        {playing ? '播放中…' : locked ? '已播放（不可重听）' : label}
+        {buttonLabel}
       </button>
-      {hint && (
+      {fallback && (
+        <p className="muted" style={{ marginTop: 8, textAlign: 'center' }}>
+          预录加载失败，已切换系统语音兜底
+        </p>
+      )}
+      {hint && !fallback && (
         <p className="muted" style={{ marginTop: 8, textAlign: 'center' }}>
           {hint}
         </p>
       )}
-      {!hint && !allowReplay && (
+      {!hint && !allowReplay && !fallback && (
         <p className="muted" style={{ marginTop: 8, textAlign: 'center' }}>
           请集中注意力，材料只播放一次
         </p>

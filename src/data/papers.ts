@@ -4,6 +4,7 @@ import type { Paper } from '../types';
 export const PAPERS: Paper[] = [
   {
     id: 'paper-a',
+    audioUrl: '/audio/papers/A/script.mp3',
     title: '试卷 A · 周末安排',
     passage:
       '周六上午九点，小李约了同事小王，在市图书馆门口见面。他们一起讨论下周的项目方案，然后中午去附近的面馆吃午餐，下午再去健身房锻炼一小时。',
@@ -56,6 +57,7 @@ export const PAPERS: Paper[] = [
   },
   {
     id: 'paper-b',
+    audioUrl: '/audio/papers/B/script.mp3',
     title: '试卷 B · 出差行程',
     passage:
       '下周三早上七点半，张敏要去机场赶八点五十的航班，飞往杭州。她需要带上两份合同，到杭州后先去滨江区的客户公司开会，晚上住在西湖附近的酒店。',
@@ -108,6 +110,7 @@ export const PAPERS: Paper[] = [
   },
   {
     id: 'paper-c',
+    audioUrl: '/audio/papers/C/script.mp3',
     title: '试卷 C · 家庭聚会',
     passage:
       '这个周日下午两点，妈妈让小陈去超市买三斤苹果和两瓶牛奶。买完后直接送到外婆家，晚上一家人在外婆家吃火锅，大约八点半结束回家。',
