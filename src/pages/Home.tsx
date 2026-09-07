@@ -40,10 +40,10 @@ export function Home() {
           primary
         />
         <EntryCard
-          to="/teach"
+          to="/methods"
           emoji="📚"
-          title="学分组"
-          subtitle="Chunking"
+          title="学方法"
+          subtitle="按优先级逐个学"
         />
         <EntryCard
           to="/practice"

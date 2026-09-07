@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { PlayOnceBar } from '../components/PlayOnceBar';
 import { QuestionCard } from '../components/QuestionCard';
 import { GroupingHintPanel } from '../components/GroupingHintPanel';
+import { MethodHintPanel } from '../components/MethodHintPanel';
 import { pickPaperByIndex } from '../data/papers';
+import { getMethod } from '../data/methods';
 import { useListenSession } from '../hooks/useListenSession';
 import { gradeAnswers, summarizePractice, isAnswerCorrect } from '../lib/scoring';
 import type { PracticeSummary } from '../types';
@@ -12,7 +14,10 @@ import type { PracticeSummary } from '../types';
 const STEPS = ['盲听', '讲解', '带提示再听', '对比'] as const;
 
 export function TeachSession() {
-  const paper = useMemo(() => pickPaperByIndex(0), []);
+  const { methodId = 'chunking' } = useParams();
+  const method = getMethod(methodId);
+
+  const paper = useMemo(() => pickPaperByIndex(methodId === 'association' ? 1 : 0), [methodId]);
   const session = useListenSession({
     paper,
     mode: 'teach',
@@ -24,8 +29,15 @@ export function TeachSession() {
   const [feedbackMode, setFeedbackMode] = useState(false);
   const [answeringPass, setAnsweringPass] = useState<'blind' | 'after'>('blind');
 
+  if (!method || method.status !== 'ready') {
+    return <Navigate to="/methods" replace />;
+  }
+
   const stepIndex =
-    session.phase === 'ready' || session.phase === 'playing' || (session.phase === 'answering' && answeringPass === 'blind') || session.phase === 'played'
+    session.phase === 'ready' ||
+    session.phase === 'playing' ||
+    (session.phase === 'answering' && answeringPass === 'blind') ||
+    session.phase === 'played'
       ? 0
       : session.phase === 'explain'
         ? 1
@@ -65,8 +77,10 @@ export function TeachSession() {
     }
   };
 
+  const isChunking = method.id === 'chunking';
+
   return (
-    <Layout title="学分组">
+    <Layout title={method.title}>
       <div className="step-dots" aria-label="学习步骤">
         {STEPS.map((s, i) => (
           <span
@@ -96,45 +110,50 @@ export function TeachSession() {
               setAnsweringPass('blind');
               session.startPlay(false);
             }}
-            hint="盲听阶段不会显示分组提示"
+            hint="盲听阶段不会显示方法提示"
           />
         </>
       )}
 
       {session.phase === 'answering' && q && (
-        <>
-          <QuestionCard
-            question={q}
-            index={session.currentQ}
-            total={paper.questions.length}
-            value={value}
-            onChange={(v) => session.setAnswer(q.id, v)}
-            showFeedback={feedbackMode}
-            isCorrect={isAnswerCorrect(value, q.answer)}
-            onNext={onQuestionNext}
-          />
-        </>
+        <QuestionCard
+          question={q}
+          index={session.currentQ}
+          total={paper.questions.length}
+          value={value}
+          onChange={(v) => session.setAnswer(q.id, v)}
+          showFeedback={feedbackMode}
+          isCorrect={isAnswerCorrect(value, q.answer)}
+          onNext={onQuestionNext}
+        />
       )}
 
       {session.phase === 'explain' && (
         <div className="card stack">
           <div className="page-title" style={{ fontSize: 18 }}>
-            什么是 Chunking（分组记忆）？
+            {method.title}
           </div>
-          <p>
-            把一长串信息按固定类别拆开，例如：
-            <strong>人物、时间、地点、任务、数字</strong>。
-          </p>
-          <p className="muted">
-            大脑更擅长记住「几组有标签的信息」，而不是一整段连续语音。听的时候主动往这些格子里填，回忆时也按格子提取。
-          </p>
+          {method.explain.map((p) => (
+            <p key={p.slice(0, 12)}>{p}</p>
+          ))}
+          {method.example && <p className="muted">{method.example}</p>}
           {blindSummary && (
             <p>
               你盲听正确 {blindSummary.correct}/{blindSummary.total} 题
               {session.blindScoreHint !== null ? `（约 ${session.blindScoreHint} 分）` : ''}。
             </p>
           )}
-          <GroupingHintPanel chunks={paper.chunks} visible />
+          {isChunking ? (
+            <GroupingHintPanel chunks={paper.chunks} visible mode="full" />
+          ) : (
+            <MethodHintPanel
+              title={`${method.title} · 挂钩维度`}
+              cues={method.replayCues}
+              visible
+              mode="full"
+              helper="下一轮播放时只显示这些维度标签，不摊开答案。"
+            />
+          )}
           <button type="button" className="btn-primary" onClick={session.goReplayReady}>
             下一步：带提示再听
           </button>
@@ -144,18 +163,28 @@ export function TeachSession() {
       {(session.phase === 'replay_ready' || session.phase === 'replaying') && (
         <>
           <div className="card">
-            <p style={{ fontWeight: 600 }}>第三步：带着分组提示再听</p>
+            <p style={{ fontWeight: 600 }}>第三步：带着方法提示再听</p>
             <p className="muted" style={{ marginTop: 6 }}>
-              播放时对照下方维度标签归类记忆；答题时提示会收起，避免开卷。
+              播放时对照下方提示挂钩记忆；答题时提示会收起。
             </p>
           </div>
-          <GroupingHintPanel chunks={paper.chunks} visible mode="tagsOnly" />
+          {isChunking ? (
+            <GroupingHintPanel chunks={paper.chunks} visible mode="tagsOnly" />
+          ) : (
+            <MethodHintPanel
+              title={`${method.title}提示`}
+              cues={method.replayCues}
+              visible
+              mode="tagsOnly"
+              helper="只看维度，自己把听到的内容挂钩上去"
+            />
+          )}
           <PlayOnceBar
             playStatus={session.playStatus}
             phase={session.phase}
             playedOnce={false}
             allowReplay
-            label="再次播放（带分组提示）"
+            label="再次播放（带方法提示）"
             onPlay={() => {
               setAnsweringPass('after');
               session.startReplay();
@@ -177,20 +206,17 @@ export function TeachSession() {
             </strong>
           </div>
           <div className="row" style={{ justifyContent: 'space-between' }}>
-            <span>分组后再测</span>
+            <span>方法后再测</span>
             <strong className="success-text">
               {afterSummary ? `${afterSummary.correct}/${afterSummary.total}` : '—'}
             </strong>
           </div>
-          <p className="muted">
-            学会按「人物 / 时间 / 地点 / 任务 / 数字」听记后，通常正确率会提升。可去「练听力」巩固，或用「测听力」更新正式分数。
-          </p>
-          <GroupingHintPanel chunks={paper.chunks} visible />
-          <Link to="/" className="btn-primary">
-            返回首页
+          <p className="muted">教学不计正式分。可回方法列表继续学，或去练听力巩固。</p>
+          <Link to="/methods" className="btn-primary">
+            返回方法列表
           </Link>
-          <Link to="/practice" className="btn-secondary">
-            去练听力
+          <Link to="/" className="btn-secondary">
+            返回首页
           </Link>
         </div>
       )}
