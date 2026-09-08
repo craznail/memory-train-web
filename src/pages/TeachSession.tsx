@@ -18,7 +18,7 @@ export function TeachSession() {
   const method = getMethod(methodId);
 
   const paper = useMemo(() => {
-    const idx = methodId === 'association' || methodId === 'imagery' ? 1 : methodId === 'story' || methodId === 'encoding' ? 2 : 0;
+    const idx = methodId === 'association' || methodId === 'imagery' ? 1 : methodId === 'story' || methodId === 'encoding' || methodId === 'palace' ? 2 : 0;
     return pickPaperByIndex(idx);
   }, [methodId]);
   const session = useListenSession({

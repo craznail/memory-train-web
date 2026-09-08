@@ -84,11 +84,15 @@ export const METHODS: MethodDef[] = [
   {
     id: 'palace',
     title: '记忆宫殿',
-    subtitle: '即将开放',
+    subtitle: '沿熟悉路线安放信息',
     emoji: '🏛️',
-    status: 'coming',
-    explain: [],
-    replayCues: [],
+    status: 'ready',
+    explain: [
+      '记忆宫殿：选一条你很熟的路线（比如家里：门口→沙发→餐桌→冰箱），把要记的信息依次「放」在这些位置上。',
+      '回忆时按路线走一遍，把位置上的画面取出来。MVP 用平面位点标签即可，先不需要 3D 场景。',
+    ],
+    replayCues: ['门口', '沙发', '餐桌', '冰箱', '阳台'],
+    example: '听的时候把人物放到门口、时间放到沙发、任务放到餐桌……按固定顺序走一圈。',
   },
 ];
 
