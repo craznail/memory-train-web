@@ -11,7 +11,7 @@ import { ScoreReport } from './pages/ScoreReport';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/memory-train-web">
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/report" element={<ScoreReport />} />
