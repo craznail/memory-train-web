@@ -71,11 +71,15 @@ export const METHODS: MethodDef[] = [
   {
     id: 'imagery',
     title: '图像化',
-    subtitle: '即将开放',
+    subtitle: '把抽象信息变成具体画面',
     emoji: '🖼️',
-    status: 'coming',
-    explain: [],
-    replayCues: [],
+    status: 'ready',
+    explain: [
+      '图像化：把抽象、干巴的信息，先在脑子里变成具体、鲜明的画面再记。',
+      '颜色、大小、动静越清楚越好。例如「优先处理」可以想成红灯闪烁的任务单顶在最前面。',
+    ],
+    replayCues: ['人物外形', '场景色调', '关键道具', '动态动作'],
+    example: '听的时候问自己：我看到了谁？在什么颜色的地方？手里拿着什么？在做什么动作？',
   },
   {
     id: 'palace',
