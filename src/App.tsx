@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { TestSession } from './pages/TestSession';
 import { TestResult } from './pages/TestResult';
@@ -11,7 +11,7 @@ import { ScoreReport } from './pages/ScoreReport';
 
 export default function App() {
   return (
-    <BrowserRouter basename="/memory-train-web">
+    <HashRouter>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/report" element={<ScoreReport />} />
@@ -24,6 +24,6 @@ export default function App() {
         <Route path="/practice" element={<PracticeSession />} />
         <Route path="/practice/end" element={<PracticeEnd />} />
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
