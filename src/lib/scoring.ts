@@ -5,6 +5,7 @@ import type {
   ScoreBreakdown,
   WeakCategory,
   PracticeSummary,
+  CategoryStat,
 } from '../types';
 
 const ALL_WEAK: WeakCategory[] = ['人物', '时间', '地点', '任务', '数字'];
@@ -34,6 +35,17 @@ export function gradeAnswers(
       correct,
       missed,
       category: q.category,
+    };
+  });
+}
+
+export function computeCategoryStats(records: AnswerRecord[]): CategoryStat[] {
+  return ALL_WEAK.map((category) => {
+    const inCat = records.filter((r) => r.category === category);
+    return {
+      category,
+      correct: inCat.filter((r) => r.correct).length,
+      total: inCat.length,
     };
   });
 }
@@ -79,6 +91,8 @@ export function computeTestScore(
     weakPoints: computeWeakPoints(records),
     date: new Date().toISOString(),
     paperId: paper.id,
+    categoryStats: computeCategoryStats(records),
+    interferencePassed: interferenceCorrect,
   };
 }
 

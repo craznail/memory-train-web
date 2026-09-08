@@ -1,6 +1,8 @@
 import { Link, useLocation, Navigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { WeaknessTags } from '../components/WeaknessTags';
+import { CategoryBreakdown } from '../components/CategoryBreakdown';
+import { computeCategoryStats } from '../lib/scoring';
 import type { AnswerRecord, ScoreBreakdown } from '../types';
 import { getPaperById } from '../data/papers';
 import { formatScoreDate } from '../lib/storage';
@@ -18,6 +20,9 @@ export function TestResult() {
 
   const { score, records } = state;
   const paper = getPaperById(state.paperId);
+  const stats = score.categoryStats?.length
+    ? score.categoryStats
+    : computeCategoryStats(records);
 
   return (
     <Layout title="测评结果">
@@ -46,10 +51,17 @@ export function TestResult() {
           <span>抗干扰</span>
           <strong>{score.antiInterference}</strong>
         </div>
-        {paper && (
-          <div className="muted">试卷：{paper.title}</div>
-        )}
+        {paper && <div className="muted">试卷：{paper.title}</div>}
       </div>
+
+      <CategoryBreakdown
+        stats={stats}
+        interferencePassed={
+          score.interferencePassed ??
+          (score.antiInterference >= 100 ? true : score.antiInterference <= 40 ? false : null)
+        }
+        antiInterferenceScore={score.antiInterference}
+      />
 
       <WeaknessTags weakPoints={score.weakPoints} />
 
@@ -59,16 +71,25 @@ export function TestResult() {
           const q = paper?.questions.find((x) => x.id === r.questionId);
           return (
             <div key={r.questionId} style={{ borderTop: '1px solid #E2E8F0', paddingTop: 8 }}>
-              <div className="muted">{q?.prompt}</div>
+              <div className="muted">
+                [{r.category}] {q?.prompt}
+              </div>
               <div className={r.correct ? 'success-text' : 'error-text'} style={{ fontWeight: 600 }}>
-                {r.missed ? '未作答' : r.correct ? `正确：${r.userAnswer}` : `你的答案：${r.userAnswer}（应为 ${q?.answer}）`}
+                {r.missed
+                  ? '未作答'
+                  : r.correct
+                    ? `正确：${r.userAnswer}`
+                    : `你的答案：${r.userAnswer}（应为 ${q?.answer}）`}
               </div>
             </div>
           );
         })}
       </div>
 
-      <Link to="/" className="btn-primary">
+      <Link to="/report" className="btn-primary">
+        查看历史报告
+      </Link>
+      <Link to="/" className="btn-secondary">
         返回首页
       </Link>
       <Link to="/test" className="btn-secondary">

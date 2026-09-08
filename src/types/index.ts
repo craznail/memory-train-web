@@ -63,6 +63,12 @@ export interface AnswerRecord {
   category: QuestionCategory;
 }
 
+export interface CategoryStat {
+  category: WeakCategory;
+  correct: number;
+  total: number;
+}
+
 export interface ScoreBreakdown {
   overall: number;
   auditory: number;
@@ -70,6 +76,10 @@ export interface ScoreBreakdown {
   weakPoints: WeakCategory[];
   date: string;
   paperId: string;
+  /** Per-category correct/total for report A; optional for older saves */
+  categoryStats?: CategoryStat[];
+  /** Whether anti-interference math was answered correctly */
+  interferencePassed?: boolean | null;
 }
 
 export interface ScoreHistory {

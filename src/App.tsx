@@ -7,12 +7,14 @@ import { MethodsList } from './pages/MethodsList';
 import { PracticeSession } from './pages/PracticeSession';
 import { PracticeEnd } from './pages/PracticeEnd';
 import { DailyTraining } from './pages/DailyTraining';
+import { ScoreReport } from './pages/ScoreReport';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/report" element={<ScoreReport />} />
         <Route path="/daily" element={<DailyTraining />} />
         <Route path="/test" element={<TestSession />} />
         <Route path="/test/result" element={<TestResult />} />

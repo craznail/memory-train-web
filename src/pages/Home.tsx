@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { ScoreCard } from '../components/ScoreCard';
 import { EntryCard } from '../components/EntryCard';
@@ -24,6 +24,9 @@ export function Home() {
       </div>
 
       <ScoreCard score={history.latest} />
+      <Link to="/report" className="btn-secondary" style={{ textAlign: 'center' }}>
+        能力报告 · 历史曲线
+      </Link>
 
       <div className="stack">
         <EntryCard
