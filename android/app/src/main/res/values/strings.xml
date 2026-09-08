@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">听力记忆训练</string>
+    <string name="title_activity_main">听力记忆训练</string>
+    <string name="package_name">com.craznail.memorytrain</string>
+    <string name="custom_url_scheme">com.craznail.memorytrain</string>
+</resources>
