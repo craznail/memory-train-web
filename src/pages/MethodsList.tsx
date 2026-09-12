@@ -2,11 +2,53 @@ import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { METHODS } from '../data/methods';
 
+const STUDIOS = [
+  {
+    to: '/studio/imagery',
+    emoji: '🏋️',
+    title: '成像健身房',
+    subtitle: '两词挂钩热身 · 练习台',
+  },
+  {
+    to: '/studio/encoding',
+    emoji: '🔢',
+    title: '编码码表',
+    subtitle: '0–9 意象表 + 双向小练',
+  },
+  {
+    to: '/studio/association',
+    emoji: '🖼️',
+    title: '生图联想',
+    subtitle: '示范画面 + 自造配图',
+  },
+];
+
 export function MethodsList() {
   return (
     <Layout title="记忆方法">
       <p className="muted" style={{ marginBottom: 8 }}>
-        按优先级逐个开放。教学不计正式分。
+        先练工作室，再看速览。不计正式分。
+      </p>
+
+      <div style={{ fontWeight: 800, margin: '8px 0' }}>方法工作室</div>
+      <div className="stack">
+        {STUDIOS.map((s) => (
+          <Link key={s.to} to={s.to} style={{ textDecoration: 'none' }}>
+            <div className="card entry-card" style={{ border: '1px solid rgba(59,130,246,0.25)' }}>
+              <div className="entry-emoji">{s.emoji}</div>
+              <div className="entry-body">
+                <div className="entry-title">{s.title}</div>
+                <div className="muted">{s.subtitle}</div>
+              </div>
+              <div className="entry-arrow">›</div>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <div style={{ fontWeight: 800, margin: '16px 0 8px' }}>方法速览</div>
+      <p className="muted" style={{ marginBottom: 8, fontSize: 13 }}>
+        旧四步薄课，快速回顾原理
       </p>
       <div className="stack">
         {METHODS.map((m, i) => {
@@ -21,7 +63,7 @@ export function MethodsList() {
                 <div className="entry-title">
                   {i + 1}. {m.title}
                 </div>
-                <div className="muted">{m.subtitle}</div>
+                <div className="muted">{m.subtitle} · 速览</div>
               </div>
               <div className="entry-arrow">{ready ? '›' : '锁'}</div>
             </div>
