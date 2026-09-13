@@ -5,6 +5,8 @@ import { PlayOnceBar } from '../components/PlayOnceBar';
 import { InterferenceCard } from '../components/InterferenceCard';
 import { QuestionCard } from '../components/QuestionCard';
 import { SessionStatusBar } from '../components/SessionStatusBar';
+import { CoachBar } from '../components/CoachBar';
+import { CoachReviewCard } from '../components/CoachReviewCard';
 import { getPaperById } from '../data/papers';
 import { useListenSession } from '../hooks/useListenSession';
 import { gradeAnswers, summarizePractice, isAnswerCorrect } from '../lib/scoring';
@@ -84,11 +86,27 @@ function RoundSession({
       />
 
       {(session.phase === 'ready' || session.phase === 'playing') && (
-        <PlayOnceBar
-          playStatus={session.playStatus}
-          phase={session.phase}
-          playedOnce={session.playedOnce}
-          onPlay={() => session.startPlay(false)}
+        <>
+          <PlayOnceBar
+            playStatus={session.playStatus}
+            phase={session.phase}
+            playedOnce={session.playedOnce}
+            onPlay={() => session.startPlay(false)}
+          />
+          <CoachBar
+            visible={session.coachAllowed}
+            enabled={session.coachEnabled}
+            tip={session.phase === 'playing' ? session.coachTip : null}
+            onToggle={session.setCoachEnabled}
+          />
+        </>
+      )}
+
+      {session.phase === 'coach_review' && (
+        <CoachReviewCard
+          tips={session.coachShownTips}
+          onContinue={session.finishCoachReview}
+          onSkip={session.finishCoachReview}
         />
       )}
 

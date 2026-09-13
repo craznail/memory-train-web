@@ -45,6 +45,7 @@ export type SessionPhase =
   | 'ready'
   | 'playing'
   | 'played'
+  | 'coach_review'
   | 'interference'
   | 'answering'
   | 'feedback'

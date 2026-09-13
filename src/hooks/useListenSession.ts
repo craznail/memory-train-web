@@ -1,25 +1,36 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Paper, SessionPhase, TrackMode } from '../types';
 import { playPassage, stopPlayback, type PlayStatus } from '../lib/audio';
+import {
+  COACH_TIPS,
+  estimateDurationMs,
+  loadCoachEnabled,
+  saveCoachEnabled,
+  tipForProgress,
+} from '../lib/coach';
 
 export interface UseListenSessionOptions {
   paper: Paper;
   mode: TrackMode;
   enableInterference?: boolean;
+  /** Mid-listen coach for test/practice/daily; default on when mode !== teach */
+  enableCoach?: boolean;
 }
 
 /**
  * Shared listen state machine:
- * ready → playing → [interference] → answering
+ * ready → playing → [coach_review] → [interference] → answering
  * Teach: ready → playing → answering → explain → replay_ready → replaying → answering → compare
  */
 export function useListenSession({
   paper,
   mode,
   enableInterference,
+  enableCoach,
 }: UseListenSessionOptions) {
   const withInterference =
     enableInterference ?? (mode === 'test' && paper.withInterference);
+  const coachAllowed = enableCoach ?? mode !== 'teach';
 
   const [phase, setPhase] = useState<SessionPhase>('ready');
   const [answers, setAnswers] = useState<Record<string, string>>({});
@@ -33,7 +44,53 @@ export function useListenSession({
   const [blindScoreHint, setBlindScoreHint] = useState<number | null>(null);
   const [playStatus, setPlayStatus] = useState<PlayStatus>('idle');
 
+  const [coachEnabled, setCoachEnabledState] = useState(() =>
+    coachAllowed ? loadCoachEnabled() : false,
+  );
+  const [coachTip, setCoachTip] = useState<string | null>(null);
+  const [coachShownTips, setCoachShownTips] = useState<string[]>([]);
+  const coachShownRef = useRef<string[]>([]);
+  const coachEnabledRef = useRef(coachEnabled);
+
   const paperIdRef = useRef(paper.id);
+
+  useEffect(() => {
+    coachEnabledRef.current = coachEnabled;
+  }, [coachEnabled]);
+
+  const setCoachEnabled = useCallback(
+    (on: boolean) => {
+      if (!coachAllowed) return;
+      setCoachEnabledState(on);
+      saveCoachEnabled(on);
+      if (!on) setCoachTip(null);
+    },
+    [coachAllowed],
+  );
+
+  const goAfterPlay = useCallback(() => {
+    const tips = coachShownRef.current;
+    if (coachAllowed && coachEnabledRef.current && tips.length > 0) {
+      setCoachShownTips([...tips]);
+      setPhase('coach_review');
+      return;
+    }
+    if (withInterference && mode !== 'teach') {
+      setPhase('interference');
+    } else {
+      setPhase('answering');
+      setCurrentQ(0);
+    }
+  }, [coachAllowed, withInterference, mode]);
+
+  const finishCoachReview = useCallback(() => {
+    if (withInterference && mode !== 'teach') {
+      setPhase('interference');
+    } else {
+      setPhase('answering');
+      setCurrentQ(0);
+    }
+  }, [withInterference, mode]);
 
   useEffect(() => {
     if (paperIdRef.current !== paper.id) {
@@ -48,37 +105,68 @@ export function useListenSession({
       setTeachPass(1);
       setBlindScoreHint(null);
       setPlayStatus('idle');
+      setCoachTip(null);
+      setCoachShownTips([]);
+      coachShownRef.current = [];
     }
   }, [paper.id]);
 
   useEffect(() => () => stopPlayback(), []);
+
+  const onCoachProgress = useCallback(
+    (ratio: number) => {
+      if (!coachAllowed || !coachEnabledRef.current) return;
+      const tip = tipForProgress(ratio);
+      setCoachTip(tip);
+      if (!coachShownRef.current.includes(tip)) {
+        coachShownRef.current = [...coachShownRef.current, tip];
+      }
+    },
+    [coachAllowed],
+  );
 
   const startPlay = useCallback(
     (isReplay = false) => {
       if (!isReplay && playedOnce && mode !== 'teach') return;
       setPhase(isReplay ? 'replaying' : 'playing');
       setPlayStatus('loading');
+      setCoachTip(null);
+      if (!isReplay) {
+        coachShownRef.current = [];
+        setCoachShownTips([]);
+        if (coachAllowed && coachEnabledRef.current) {
+          setCoachTip(COACH_TIPS[0]);
+          coachShownRef.current = [COACH_TIPS[0]];
+        }
+      }
+      const estimated = estimateDurationMs(paper.passage);
       playPassage({
         text: paper.passage,
         audioUrl: paper.audioUrl,
+        estimatedDurationMs: estimated,
         onStatus: setPlayStatus,
+        onProgress: isReplay ? undefined : onCoachProgress,
         onEnd: () => {
+          setCoachTip(null);
           if (isReplay) {
             setPhase('answering');
             setCurrentQ(0);
             return;
           }
           setPlayedOnce(true);
-          if (withInterference && mode !== 'teach') {
-            setPhase('interference');
-          } else {
-            setPhase('answering');
-            setCurrentQ(0);
-          }
+          goAfterPlay();
         },
       });
     },
-    [paper.passage, paper.audioUrl, playedOnce, mode, withInterference],
+    [
+      paper.passage,
+      paper.audioUrl,
+      playedOnce,
+      mode,
+      coachAllowed,
+      onCoachProgress,
+      goAfterPlay,
+    ],
   );
 
   const submitInterference = useCallback(() => {
@@ -138,6 +226,12 @@ export function useListenSession({
     blindScoreHint,
     withInterference,
     playStatus,
+    coachAllowed,
+    coachEnabled,
+    setCoachEnabled,
+    coachTip,
+    coachShownTips,
+    finishCoachReview,
     startPlay,
     submitInterference,
     nextQuestion,
