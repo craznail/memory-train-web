@@ -21,6 +21,12 @@ const STUDIOS = [
     title: '生图联想',
     subtitle: '示范画面 + 自造配图',
   },
+  {
+    to: '/studio/palace',
+    emoji: '🏛️',
+    title: '宫殿工作台',
+    subtitle: '位点放置 · 走一圈回忆',
+  },
 ];
 
 export function MethodsList() {
