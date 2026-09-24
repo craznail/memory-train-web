@@ -12,12 +12,14 @@ import { ImageryStudio } from './pages/studio/ImageryStudio';
 import { EncodingStudio } from './pages/studio/EncodingStudio';
 import { AssociationStudio } from './pages/studio/AssociationStudio';
 import { PalaceStudio } from './pages/studio/PalaceStudio';
+import { Settings } from './pages/Settings';
 
 export default function App() {
   return (
     <HashRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="/report" element={<ScoreReport />} />
         <Route path="/daily" element={<DailyTraining />} />
         <Route path="/test" element={<TestSession />} />

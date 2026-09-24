@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "npx --yes tsx --test src/lib/imageGen.test.ts"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.2",

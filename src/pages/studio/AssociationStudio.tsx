@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StudioShell } from '../../components/StudioShell';
+import { ASSOC_DEMOS, prefabImageUrl } from '../../data/associationStudio';
 import {
-  ASSOC_DEMOS,
-  generateAssociationImage,
-  prefabImageUrl,
-} from '../../data/associationStudio';
+  MAX_SWAPS_PER_SENTENCE,
+  canSwap,
+  generateAssociationScene,
+  hintForReason,
+  type FallbackReason,
+} from '../../lib/imageGen';
 
-type Phase = 'demo' | 'create' | 'compare';
+type Phase = 'demo' | 'create' | 'result' | 'compare';
 
 export function AssociationStudio() {
   const demo = ASSOC_DEMOS[0];
@@ -15,21 +18,46 @@ export function AssociationStudio() {
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(false);
   const [myUrl, setMyUrl] = useState<string | null>(null);
-  const [failed, setFailed] = useState(false);
+  const [hint, setHint] = useState<string | null>(null);
+  const [swapCount, setSwapCount] = useState(0);
 
   const demoUrl = prefabImageUrl(demo.imageSeed);
 
-  const onGenerate = async () => {
+  const runGenerate = async (nextSwapCount: number) => {
+    const sentence = text.trim();
+    if (sentence.length < 4) return;
+
     setLoading(true);
-    setFailed(false);
-    const res = await generateAssociationImage(text);
+    setHint(null);
+
+    const outcome = await generateAssociationScene({
+      sentence,
+      seedSuffix: String(nextSwapCount),
+    });
+
     setLoading(false);
-    if (!res.ok) {
-      setFailed(true);
-      setMyUrl(null);
-      return;
+    setMyUrl(outcome.url);
+    setSwapCount(nextSwapCount);
+
+    if (outcome.kind === 'fallback') {
+      setHint(hintForReason(outcome.reason as FallbackReason));
+    } else {
+      setHint(null);
     }
-    setMyUrl(res.url);
+    setPhase('result');
+  };
+
+  const onGenerate = () => {
+    void runGenerate(0);
+  };
+
+  const onSwap = () => {
+    if (!canSwap(swapCount)) return;
+    void runGenerate(swapCount + 1);
+  };
+
+  const onAccept = () => {
+    if (!myUrl) return;
     setPhase('compare');
   };
 
@@ -91,20 +119,20 @@ export function AssociationStudio() {
             }}
           />
           {loading && (
-            <div
-              className="card"
-              style={{
-                height: 180,
-                background: 'linear-gradient(90deg,#E2E8F0,#F8FAFC,#E2E8F0)',
-                backgroundSize: '200% 100%',
-                borderRadius: 16,
-              }}
-            />
-          )}
-          {failed && (
-            <div className="card">
-              <p style={{ fontWeight: 700 }}>配图暂时失败</p>
-              <p className="muted">先记住文字钩子，不堵流程。可重试生成。</p>
+            <div className="stack" style={{ gap: 8 }}>
+              <div
+                aria-hidden
+                style={{
+                  width: '100%',
+                  aspectRatio: '1 / 1',
+                  borderRadius: 16,
+                  background: 'linear-gradient(90deg,#E2E8F0,#F8FAFC,#E2E8F0)',
+                  backgroundSize: '200% 100%',
+                }}
+              />
+              <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
+                画面生成中…
+              </p>
             </div>
           )}
           <button
@@ -113,10 +141,81 @@ export function AssociationStudio() {
             disabled={loading || text.trim().length < 4}
             onClick={onGenerate}
           >
-            {loading ? '生成中…' : '生成我的画面'}
+            生成画面
           </button>
           <button type="button" className="btn-secondary" onClick={() => setPhase('demo')}>
             回看示范
+          </button>
+          <Link to="/settings" className="muted" style={{ textAlign: 'center', fontSize: 13 }}>
+            配置生图服务（可选）
+          </Link>
+        </div>
+      )}
+
+      {phase === 'result' && (
+        <div className="card stack">
+          <div style={{ fontWeight: 700 }}>你的画面</div>
+          {loading ? (
+            <div className="stack" style={{ gap: 8 }}>
+              <div
+                aria-hidden
+                style={{
+                  width: '100%',
+                  aspectRatio: '1 / 1',
+                  borderRadius: 16,
+                  background: 'linear-gradient(90deg,#E2E8F0,#F8FAFC,#E2E8F0)',
+                  backgroundSize: '200% 100%',
+                }}
+              />
+              <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
+                画面生成中…
+              </p>
+            </div>
+          ) : (
+            <>
+              {myUrl && (
+                <img
+                  src={myUrl}
+                  alt="生成画面"
+                  style={{ width: '100%', borderRadius: 16, display: 'block' }}
+                />
+              )}
+              {hint && (
+                <p className="muted" style={{ margin: 0, textAlign: 'center' }}>
+                  {hint}
+                </p>
+              )}
+            </>
+          )}
+          <button
+            type="button"
+            className="btn-secondary"
+            disabled={loading || !canSwap(swapCount)}
+            onClick={onSwap}
+          >
+            换一张
+            {!canSwap(swapCount) ? `（已达 ${MAX_SWAPS_PER_SENTENCE} 次）` : ''}
+          </button>
+          <button
+            type="button"
+            className="btn-primary"
+            disabled={loading || !myUrl}
+            onClick={onAccept}
+          >
+            就用这张
+          </button>
+          <button
+            type="button"
+            className="btn-secondary"
+            disabled={loading}
+            onClick={() => {
+              setPhase('create');
+              setMyUrl(null);
+              setHint(null);
+              setSwapCount(0);
+            }}
+          >
+            改句子
           </button>
         </div>
       )}
@@ -134,7 +233,7 @@ export function AssociationStudio() {
             <div className="muted" style={{ marginBottom: 4 }}>
               我的图
             </div>
-            <img src={myUrl} alt="我的" style={{ width: '100%', borderRadius: 12 }} />
+            <img src={myUrl} alt="我的" style={{ width: '100%', borderRadius: 16 }} />
           </div>
           <p className="muted">你的钩子：{text}</p>
           <Link to="/methods" className="btn-primary">
@@ -146,6 +245,8 @@ export function AssociationStudio() {
             onClick={() => {
               setPhase('create');
               setMyUrl(null);
+              setHint(null);
+              setSwapCount(0);
             }}
           >
             再造一版

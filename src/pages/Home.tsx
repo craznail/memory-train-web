@@ -54,6 +54,12 @@ export function Home() {
           title="练听力"
           subtitle="不改分"
         />
+        <EntryCard
+          to="/settings"
+          emoji="⚙️"
+          title="设置"
+          subtitle="生图服务等（可选）"
+        />
       </div>
     </Layout>
   );
