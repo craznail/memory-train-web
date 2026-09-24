@@ -199,3 +199,59 @@ describe('generateAssociationScene paths', () => {
     if (out.kind === 'fallback') assert.equal(out.reason, 'error');
   });
 });
+
+describe('empty sentence and captions', () => {
+  it('empty sentence never reads as daily limit and does not consume quota', async () => {
+    const s = memStorage();
+    const now = new Date(2026, 8, 24, 12, 0, 0);
+    assert.equal(canGenerateToday(s, now), true);
+    const out = await generateAssociationScene({
+      sentence: '   ',
+      prefs: { baseUrl: 'https://bad.example/v1', apiKey: 'sk-test' },
+      storage: s,
+      now,
+      fetchFn: async () => {
+        throw new Error('should not fetch');
+      },
+    });
+    assert.equal(out.kind, 'fallback');
+    if (out.kind === 'fallback') assert.notEqual(out.reason, 'daily_limit');
+    assert.equal(getDailyCount(s, now), 0);
+    assert.equal(canGenerateToday(s, now), true);
+  });
+
+  it('fallback SVG caption is the sentence only, no internal ids or swap suffix', async () => {
+    const out = await generateAssociationScene({
+      sentence: '小李把图书馆顶在头上',
+      prefs: { baseUrl: 'https://api.openai.com/v1', apiKey: '' },
+      storage: memStorage(),
+      seedSuffix: '2',
+    });
+    const svg = decodeURIComponent(out.url);
+    assert.match(svg, />小李把图书馆顶在头上</);
+    assert.doesNotMatch(svg, /小李把图书馆顶在头上-2/);
+    assert.doesNotMatch(svg, /daily-limit|assoc/);
+  });
+
+  it('with a sentence and quota left, a configured key actually requests and counts once', async () => {
+    const s = memStorage();
+    const now = new Date(2026, 8, 24, 12, 0, 0);
+    let calls = 0;
+    const out = await generateAssociationScene({
+      sentence: '小李把图书馆顶在头上',
+      prefs: { baseUrl: 'https://mock.example/v1', apiKey: 'sk-test' },
+      storage: s,
+      now,
+      fetchFn: (async () => {
+        calls++;
+        return new Response(JSON.stringify({ data: [{ b64_json: 'iVBORw0KGgo=' }] }), {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' },
+        });
+      }) as typeof fetch,
+    });
+    assert.equal(calls, 1);
+    assert.equal(out.kind, 'api');
+    assert.equal(getDailyCount(s, now), 1);
+  });
+});

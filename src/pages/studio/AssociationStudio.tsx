@@ -44,7 +44,8 @@ export function AssociationStudio() {
   const configured = isConfigured(prefs);
   const dailyOk = canGenerateToday();
   const dailyBlocked = configured && !dailyOk;
-  const limitPreviewUrl = prefabImageUrl((text.trim() || 'daily-limit').slice(0, 48));
+  const previewCaption = text.trim().slice(0, 48);
+  const limitPreviewUrl = prefabImageUrl(previewCaption || 'preview', previewCaption);
 
   const runGenerate = async (nextSwapCount: number) => {
     const sentence = text.trim();

@@ -22,7 +22,11 @@ export const ASSOC_DEMOS: AssocDemo[] = [
 ];
 
 /** Deterministic colorful SVG placeholder (no API key required). */
-export function prefabImageUrl(seed: string): string {
+export function prefabImageUrl(seed: string, caption: string = seed): string {
+  const safeCaption = caption.replace(/[<>&'"]/g, '');
+  const captionNode = safeCaption
+    ? `<text x="50%" y="58%" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="16" font-family="sans-serif">${safeCaption}</text>`
+    : '';
   const hue = Math.abs([...seed].reduce((a, c) => a + c.charCodeAt(0), 0)) % 360;
   return `data:image/svg+xml,${encodeURIComponent(
     `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640">
@@ -31,7 +35,7 @@ export function prefabImageUrl(seed: string): string {
       </linearGradient></defs>
       <rect width="640" height="640" fill="url(#g)"/>
       <text x="50%" y="48%" text-anchor="middle" fill="white" font-size="28" font-family="sans-serif">联想画面</text>
-      <text x="50%" y="58%" text-anchor="middle" fill="rgba(255,255,255,0.85)" font-size="16" font-family="sans-serif">${seed.replace(/[<>&'"]/g, '')}</text>
+      ${captionNode}
     </svg>`,
   )}`;
 }

@@ -166,8 +166,8 @@ function normalizeBaseUrl(baseUrl: string): string {
   return baseUrl.trim().replace(/\/+$/, '') || DEFAULT_BASE_URL;
 }
 
-function fallbackUrl(seed: string): string {
-  return prefabImageUrl(seed.slice(0, 48) || 'assoc');
+function fallbackUrl(seed: string, caption: string): string {
+  return prefabImageUrl(seed.slice(0, 48) || 'assoc', caption.slice(0, 48));
 }
 
 interface ApiImageResponse {
@@ -193,7 +193,7 @@ export async function generateAssociationScene(options: {
 }): Promise<GenerateOutcome> {
   const sentence = options.sentence.trim();
   const seed = `${sentence || 'assoc'}-${options.seedSuffix ?? '0'}`;
-  const svg = fallbackUrl(seed);
+  const svg = fallbackUrl(seed, sentence);
 
   if (!sentence) {
     return { kind: 'fallback', url: svg, reason: 'error' };
