@@ -324,3 +324,26 @@ a {
     animation: none;
   }
 }
+
+
+/* Association sentence textarea */
+.assoc-sentence-input {
+  width: 100%;
+  border-radius: var(--radius-md);
+  border: 1px solid #E2E8F0;
+  padding: 12px;
+  font-size: var(--font-body);
+  font-family: inherit;
+  color: var(--color-text);
+  background: #fff;
+  outline: none;
+  resize: vertical;
+  box-shadow: none;
+}
+
+.assoc-sentence-input:focus,
+.assoc-sentence-input:focus-visible {
+  border-color: var(--color-primary);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.25);
+}

@@ -138,40 +138,35 @@ export function AssociationStudio() {
             ))}
           </div>
           <textarea
+            className="assoc-sentence-input"
             value={text}
             onChange={(e) => setText(e.target.value)}
             rows={4}
             placeholder="写出你的画面钩子…"
-            style={{
-              width: '100%',
-              borderRadius: 12,
-              border: '1px solid #E2E8F0',
-              padding: 12,
-              fontSize: 16,
-              fontFamily: 'inherit',
-            }}
           />
           {loading && <SkeletonBlock />}
           {!loading && dailyBlocked && (
-            <>
-              <img
-                src={limitPreviewUrl}
-                alt="示意图"
-                style={{ width: '100%', borderRadius: 16, display: 'block' }}
-              />
+            <img
+              src={limitPreviewUrl}
+              alt="示意图"
+              style={{ width: '100%', borderRadius: 16, display: 'block' }}
+            />
+          )}
+          <div className="stack" style={{ gap: 6 }}>
+            <button
+              type="button"
+              className="btn-primary"
+              disabled={loading || dailyBlocked || text.trim().length < 4}
+              onClick={onGenerate}
+            >
+              生成画面
+            </button>
+            {dailyBlocked && (
               <p className="muted" style={{ margin: 0, textAlign: 'center' }}>
                 {DAILY_LIMIT_HINT}
               </p>
-            </>
-          )}
-          <button
-            type="button"
-            className="btn-primary"
-            disabled={loading || dailyBlocked || text.trim().length < 4}
-            onClick={onGenerate}
-          >
-            生成画面
-          </button>
+            )}
+          </div>
           <button type="button" className="btn-secondary" onClick={() => setPhase('demo')}>
             回看示范
           </button>
@@ -202,14 +197,21 @@ export function AssociationStudio() {
               )}
             </>
           )}
-          <button
-            type="button"
-            className="btn-secondary"
-            disabled={loading || !canSwap(swapCount)}
-            onClick={onSwap}
-          >
-            换一张
-          </button>
+          <div className="stack" style={{ gap: 6 }}>
+            <button
+              type="button"
+              className="btn-secondary"
+              disabled={loading || !canSwap(swapCount)}
+              onClick={onSwap}
+            >
+              换一张
+            </button>
+            {!canSwap(swapCount) && (
+              <p className="muted" style={{ margin: 0, textAlign: 'center' }}>
+                {SWAP_EXHAUSTED_HINT}
+              </p>
+            )}
+          </div>
           <button
             type="button"
             className="btn-primary"
@@ -218,11 +220,6 @@ export function AssociationStudio() {
           >
             就用这张
           </button>
-          {!canSwap(swapCount) && (
-            <p className="muted" style={{ margin: 0, textAlign: 'center' }}>
-              {SWAP_EXHAUSTED_HINT}
-            </p>
-          )}
           <button
             type="button"
             className="btn-secondary"

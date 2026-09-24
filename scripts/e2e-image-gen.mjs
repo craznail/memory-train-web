@@ -214,6 +214,16 @@ async function main() {
   const dailyHint = (await page.locator('text=今日生成次数已用完，明天再来').count()) > 0;
   record('09-daily-cap', genDisabled && dailyHint, `disabled=${genDisabled} hint=${dailyHint}`);
 
+
+  // 11 textarea focus
+  await openCreate(page);
+  await page.locator('textarea.assoc-sentence-input').click();
+  await page.locator('textarea.assoc-sentence-input').focus();
+  await wait(200);
+  await shot(page, '11-input-focus.png');
+  const focused = await page.locator('textarea.assoc-sentence-input:focus').count();
+  record('11-input-focus', focused > 0, `focused=${focused}`);
+
   // 10 network
   await page.evaluate(() => localStorage.removeItem('mt-image-gen-daily'));
   await startMock('success');
