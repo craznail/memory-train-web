@@ -280,3 +280,47 @@ a {
   opacity: 0.55;
   font-weight: 500;
 }
+
+
+/* Image generation skeleton shimmer */
+.image-gen-skeleton {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
+  background: #E5E7EB;
+  position: relative;
+  overflow: hidden;
+}
+
+.image-gen-skeleton::after {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: -60%;
+  width: 45%;
+  height: 180%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  transform: rotate(25deg) translateX(0);
+  animation: image-gen-shimmer 1.4s ease-in-out infinite;
+}
+
+@keyframes image-gen-shimmer {
+  0% {
+    transform: rotate(25deg) translateX(0);
+  }
+  100% {
+    transform: rotate(25deg) translateX(350%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image-gen-skeleton::after {
+    display: none;
+    animation: none;
+  }
+}

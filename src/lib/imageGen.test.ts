@@ -2,7 +2,10 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 import {
   DAILY_LIMIT,
+  DAILY_LIMIT_HINT,
+  GEN_FAILED_HINT,
   MAX_SWAPS_PER_SENTENCE,
+  SWAP_EXHAUSTED_HINT,
   buildPrompt,
   canGenerateToday,
   canSwap,
@@ -36,7 +39,7 @@ describe('imageGen prefs + quota', () => {
     assert.equal(isConfigured({ baseUrl: 'https://api.openai.com/v1', apiKey: 'sk-x' }), true);
   });
 
-  it('persists prefs without exposing key in helpers', () => {
+  it('persists prefs', () => {
     const s = memStorage();
     saveImageGenPrefs({ baseUrl: 'https://example.com/v1', apiKey: 'secret' }, s);
     const loaded = loadImageGenPrefs(s);
@@ -67,10 +70,12 @@ describe('imageGen prefs + quota', () => {
     assert.match(p, /Flat illustration/);
   });
 
-  it('hintForReason is silent for no_key', () => {
+  it('hintForReason copy', () => {
     assert.equal(hintForReason('no_key'), null);
-    assert.match(hintForReason('daily_limit')!, /今天的生成次数用完了/);
-    assert.match(hintForReason('error')!, /生成失败/);
+    assert.equal(hintForReason('daily_limit'), DAILY_LIMIT_HINT);
+    assert.equal(hintForReason('error'), GEN_FAILED_HINT);
+    assert.equal(SWAP_EXHAUSTED_HINT, '这句已换 3 次');
+    assert.equal(DAILY_LIMIT_HINT, '今日生成次数已用完，明天再来');
   });
 });
 
@@ -108,7 +113,7 @@ describe('generateAssociationScene paths', () => {
     if (out.kind === 'fallback') assert.equal(out.reason, 'daily_limit');
   });
 
-  it('bad host / network → SVG + error and counts attempt', async () => {
+  it('network error → SVG + error and counts attempt', async () => {
     const s = memStorage();
     const now = new Date(2026, 8, 24, 12, 0, 0);
     const out = await generateAssociationScene({
@@ -136,7 +141,6 @@ describe('generateAssociationScene paths', () => {
       fetchFn: async (_url, init) => {
         const headers = init?.headers as Record<string, string>;
         assert.match(headers.Authorization, /^Bearer sk-test$/);
-        // ensure body does not need to be logged; just parse
         const body = JSON.parse(String(init?.body));
         assert.equal(body.size, '1024x1024');
         assert.equal(body.n, 1);
@@ -168,5 +172,30 @@ describe('generateAssociationScene paths', () => {
     });
     assert.equal(out.kind, 'api');
     if (out.kind === 'api') assert.equal(out.url, 'https://cdn.example/img.png');
+  });
+
+  it('aborts on timeout → SVG + error', async () => {
+    const s = memStorage();
+    const now = new Date(2026, 8, 24, 12, 0, 0);
+    const out = await generateAssociationScene({
+      sentence: '小李把图书馆顶在头上',
+      prefs: { baseUrl: 'https://api.example/v1', apiKey: 'sk-test' },
+      storage: s,
+      now,
+      timeoutMs: 40,
+      fetchFn: async (_url, init) => {
+        const signal = init?.signal;
+        await new Promise<void>((_resolve, reject) => {
+          const t = setTimeout(() => reject(new Error('too slow')), 5000);
+          signal?.addEventListener('abort', () => {
+            clearTimeout(t);
+            reject(new DOMException('Aborted', 'AbortError'));
+          });
+        });
+        return { ok: true, json: async () => ({ data: [] }) } as Response;
+      },
+    });
+    assert.equal(out.kind, 'fallback');
+    if (out.kind === 'fallback') assert.equal(out.reason, 'error');
   });
 });

@@ -3,14 +3,29 @@ import { Link } from 'react-router-dom';
 import { StudioShell } from '../../components/StudioShell';
 import { ASSOC_DEMOS, prefabImageUrl } from '../../data/associationStudio';
 import {
-  MAX_SWAPS_PER_SENTENCE,
+  DAILY_LIMIT_HINT,
+  SWAP_EXHAUSTED_HINT,
+  canGenerateToday,
   canSwap,
   generateAssociationScene,
   hintForReason,
+  isConfigured,
+  loadImageGenPrefs,
   type FallbackReason,
 } from '../../lib/imageGen';
 
 type Phase = 'demo' | 'create' | 'result' | 'compare';
+
+function SkeletonBlock() {
+  return (
+    <div className="stack" style={{ gap: 8 }}>
+      <div className="image-gen-skeleton" aria-hidden />
+      <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
+        画面生成中…
+      </p>
+    </div>
+  );
+}
 
 export function AssociationStudio() {
   const demo = ASSOC_DEMOS[0];
@@ -20,8 +35,16 @@ export function AssociationStudio() {
   const [myUrl, setMyUrl] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
   const [swapCount, setSwapCount] = useState(0);
+  const [quotaTick, setQuotaTick] = useState(0);
 
   const demoUrl = prefabImageUrl(demo.imageSeed);
+
+  void quotaTick; // refresh prefs after generations
+  const prefs = loadImageGenPrefs();
+  const configured = isConfigured(prefs);
+  const dailyOk = canGenerateToday();
+  const dailyBlocked = configured && !dailyOk;
+  const limitPreviewUrl = prefabImageUrl((text.trim() || 'daily-limit').slice(0, 48));
 
   const runGenerate = async (nextSwapCount: number) => {
     const sentence = text.trim();
@@ -38,6 +61,7 @@ export function AssociationStudio() {
     setLoading(false);
     setMyUrl(outcome.url);
     setSwapCount(nextSwapCount);
+    setQuotaTick((n) => n + 1);
 
     if (outcome.kind === 'fallback') {
       setHint(hintForReason(outcome.reason as FallbackReason));
@@ -48,6 +72,7 @@ export function AssociationStudio() {
   };
 
   const onGenerate = () => {
+    if (dailyBlocked) return;
     void runGenerate(0);
   };
 
@@ -59,6 +84,14 @@ export function AssociationStudio() {
   const onAccept = () => {
     if (!myUrl) return;
     setPhase('compare');
+  };
+
+  const resetToCreate = () => {
+    setPhase('create');
+    setMyUrl(null);
+    setHint(null);
+    setSwapCount(0);
+    setQuotaTick((n) => n + 1);
   };
 
   return (
@@ -118,27 +151,23 @@ export function AssociationStudio() {
               fontFamily: 'inherit',
             }}
           />
-          {loading && (
-            <div className="stack" style={{ gap: 8 }}>
-              <div
-                aria-hidden
-                style={{
-                  width: '100%',
-                  aspectRatio: '1 / 1',
-                  borderRadius: 16,
-                  background: 'linear-gradient(90deg,#E2E8F0,#F8FAFC,#E2E8F0)',
-                  backgroundSize: '200% 100%',
-                }}
+          {loading && <SkeletonBlock />}
+          {!loading && dailyBlocked && (
+            <>
+              <img
+                src={limitPreviewUrl}
+                alt="示意图"
+                style={{ width: '100%', borderRadius: 16, display: 'block' }}
               />
-              <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
-                画面生成中…
+              <p className="muted" style={{ margin: 0, textAlign: 'center' }}>
+                {DAILY_LIMIT_HINT}
               </p>
-            </div>
+            </>
           )}
           <button
             type="button"
             className="btn-primary"
-            disabled={loading || text.trim().length < 4}
+            disabled={loading || dailyBlocked || text.trim().length < 4}
             onClick={onGenerate}
           >
             生成画面
@@ -156,21 +185,7 @@ export function AssociationStudio() {
         <div className="card stack">
           <div style={{ fontWeight: 700 }}>你的画面</div>
           {loading ? (
-            <div className="stack" style={{ gap: 8 }}>
-              <div
-                aria-hidden
-                style={{
-                  width: '100%',
-                  aspectRatio: '1 / 1',
-                  borderRadius: 16,
-                  background: 'linear-gradient(90deg,#E2E8F0,#F8FAFC,#E2E8F0)',
-                  backgroundSize: '200% 100%',
-                }}
-              />
-              <p className="muted" style={{ textAlign: 'center', margin: 0 }}>
-                画面生成中…
-              </p>
-            </div>
+            <SkeletonBlock />
           ) : (
             <>
               {myUrl && (
@@ -194,7 +209,6 @@ export function AssociationStudio() {
             onClick={onSwap}
           >
             换一张
-            {!canSwap(swapCount) ? `（已达 ${MAX_SWAPS_PER_SENTENCE} 次）` : ''}
           </button>
           <button
             type="button"
@@ -204,16 +218,16 @@ export function AssociationStudio() {
           >
             就用这张
           </button>
+          {!canSwap(swapCount) && (
+            <p className="muted" style={{ margin: 0, textAlign: 'center' }}>
+              {SWAP_EXHAUSTED_HINT}
+            </p>
+          )}
           <button
             type="button"
             className="btn-secondary"
             disabled={loading}
-            onClick={() => {
-              setPhase('create');
-              setMyUrl(null);
-              setHint(null);
-              setSwapCount(0);
-            }}
+            onClick={resetToCreate}
           >
             改句子
           </button>
@@ -239,16 +253,7 @@ export function AssociationStudio() {
           <Link to="/methods" className="btn-primary">
             完成，回方法列表
           </Link>
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => {
-              setPhase('create');
-              setMyUrl(null);
-              setHint(null);
-              setSwapCount(0);
-            }}
-          >
+          <button type="button" className="btn-secondary" onClick={resetToCreate}>
             再造一版
           </button>
         </div>

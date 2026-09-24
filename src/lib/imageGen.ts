@@ -3,15 +3,21 @@
 import { prefabImageUrl } from '../data/associationStudio';
 
 export const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
-/** Model is not exposed in Settings UI; kept as a constant. */
+/** Model is not exposed in Settings UI. */
 export const DEFAULT_MODEL = 'gpt-image-1';
 export const DAILY_LIMIT = 20;
 /** Max 「换一张」 clicks per association sentence. */
 export const MAX_SWAPS_PER_SENTENCE = 3;
 export const IMAGE_SIZE = '1024x1024';
+/** Abort fetch after this many ms (override in tests). */
+export const REQUEST_TIMEOUT_MS = 20_000;
 
 export const STYLE_SUFFIX =
   '，扁平插画风格，明亮配色，画面中不要出现任何文字。Flat illustration, bright colors, no text.';
+
+export const DAILY_LIMIT_HINT = '今日生成次数已用完，明天再来';
+export const SWAP_EXHAUSTED_HINT = '这句已换 3 次';
+export const GEN_FAILED_HINT = '生成失败，先用示意图';
 
 const PREFS_KEY = 'mt-image-gen-prefs';
 const DAILY_KEY = 'mt-image-gen-daily';
@@ -148,9 +154,7 @@ export function recordGeneration(
     date: today,
     count: current.date === today ? current.count + 1 : 1,
   };
-  if (storage) {
-    storage.setItem(DAILY_KEY, JSON.stringify(next));
-  }
+  if (storage) storage.setItem(DAILY_KEY, JSON.stringify(next));
   return next;
 }
 
@@ -184,6 +188,8 @@ export async function generateAssociationScene(options: {
   model?: string;
   /** Extra seed suffix so 「换一张」 varies the SVG fallback. */
   seedSuffix?: string;
+  /** Override request timeout (ms). Defaults to REQUEST_TIMEOUT_MS. */
+  timeoutMs?: number;
 }): Promise<GenerateOutcome> {
   const sentence = options.sentence.trim();
   const seed = `${sentence || 'assoc'}-${options.seedSuffix ?? '0'}`;
@@ -208,9 +214,13 @@ export async function generateAssociationScene(options: {
   const fetchFn = options.fetchFn ?? fetch;
   const model = options.model ?? DEFAULT_MODEL;
   const endpoint = `${normalizeBaseUrl(prefs.baseUrl)}/images/generations`;
+  const timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
 
   // Record attempt before the request so flaky/spam calls still consume quota.
   recordGeneration(storage, now);
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
     const res = await fetchFn(endpoint, {
@@ -225,6 +235,7 @@ export async function generateAssociationScene(options: {
         size: IMAGE_SIZE,
         n: 1,
       }),
+      signal: controller.signal,
     });
 
     if (!res.ok) {
@@ -242,11 +253,13 @@ export async function generateAssociationScene(options: {
     return { kind: 'fallback', url: svg, reason: 'error' };
   } catch {
     return { kind: 'fallback', url: svg, reason: 'error' };
+  } finally {
+    clearTimeout(timer);
   }
 }
 
 export function hintForReason(reason: FallbackReason): string | null {
   if (reason === 'no_key') return null;
-  if (reason === 'daily_limit') return '今天的生成次数用完了，先用示意图';
-  return '生成失败，先用示意图';
+  if (reason === 'daily_limit') return DAILY_LIMIT_HINT;
+  return GEN_FAILED_HINT;
 }

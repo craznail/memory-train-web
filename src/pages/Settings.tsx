@@ -11,6 +11,35 @@ import {
   type ImageGenPrefs,
 } from '../lib/imageGen';
 
+function EyeOpenIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"
+        stroke="#9CA3AF"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="12" r="3" stroke="#9CA3AF" strokeWidth="1.75" />
+    </svg>
+  );
+}
+
+function EyeClosedIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M3 3l18 18M10.6 10.7a3 3 0 004.2 4.2M9.5 5.5C10.3 5.2 11.1 5 12 5c6.5 0 10 7 10 7a17.6 17.6 0 01-4.2 4.6M6.1 6.1A17.3 17.3 0 002 12s3.5 7 10 7c1.3 0 2.5-.3 3.6-.7"
+        stroke="#9CA3AF"
+        strokeWidth="1.75"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function Settings() {
   const initial = useMemo(() => loadImageGenPrefs(), []);
   const [baseUrl, setBaseUrl] = useState(initial.baseUrl || DEFAULT_BASE_URL);
@@ -111,11 +140,11 @@ export function Settings() {
                 height: 32,
                 display: 'grid',
                 placeItems: 'center',
-                color: 'var(--color-text-secondary)',
                 borderRadius: 8,
+                padding: 0,
               }}
             >
-              {showKey ? '🙈' : '👁'}
+              {showKey ? <EyeClosedIcon /> : <EyeOpenIcon />}
             </button>
           </div>
         </label>
