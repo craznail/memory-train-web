@@ -30,3 +30,6 @@ android/local.properties/
 android/.idea/
 *.iml
 .capacitor/
+
+scripts/mock-image-api-headers.log
+scripts/*.log
