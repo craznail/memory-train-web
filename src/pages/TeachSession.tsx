@@ -5,9 +5,11 @@ import { PlayOnceBar } from '../components/PlayOnceBar';
 import { QuestionCard } from '../components/QuestionCard';
 import { GroupingHintPanel } from '../components/GroupingHintPanel';
 import { MethodHintPanel } from '../components/MethodHintPanel';
+import { PalaceRouteCard } from '../components/PalaceRouteCard';
 import { pickPaperByIndex } from '../data/papers';
 import { getMethod } from '../data/methods';
 import { useListenSession } from '../hooks/useListenSession';
+import { loadConfirmedScenes, placeConfirmedImage } from '../lib/confirmedScenes';
 import { gradeAnswers, summarizePractice, isAnswerCorrect } from '../lib/scoring';
 import type { PracticeSummary } from '../types';
 
@@ -31,6 +33,27 @@ export function TeachSession() {
   const [afterSummary, setAfterSummary] = useState<PracticeSummary | null>(null);
   const [feedbackMode, setFeedbackMode] = useState(false);
   const [answeringPass, setAnsweringPass] = useState<'blind' | 'after'>('blind');
+  const [confirmedScenes] = useState(() => loadConfirmedScenes());
+  const [scenePlacements, setScenePlacements] = useState<Record<string, string>>({});
+  const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
+  const palacePegs = useMemo(
+    () =>
+      method?.id === 'palace'
+        ? method.replayCues.map((cue) => ({ id: cue, slip: cue }))
+        : [],
+    [method],
+  );
+  const placeScene = (pegId: string, sceneId: string) => {
+    setScenePlacements((prev) =>
+      placeConfirmedImage(
+        prev,
+        pegId,
+        sceneId,
+        confirmedScenes.map((s) => s.id),
+      ),
+    );
+    setSelectedSceneId(null);
+  };
 
   if (!method || method.status !== 'ready') {
     return <Navigate to="/methods" replace />;
@@ -148,6 +171,17 @@ export function TeachSession() {
           )}
           {isChunking ? (
             <GroupingHintPanel chunks={paper.chunks} visible mode="full" />
+          ) : method.id === 'palace' ? (
+            <PalaceRouteCard
+              pegs={palacePegs}
+              scenes={confirmedScenes}
+              placements={scenePlacements}
+              selectedId={selectedSceneId}
+              onSelect={setSelectedSceneId}
+              onPlace={placeScene}
+              mode="place"
+              revealed={false}
+            />
           ) : (
             <MethodHintPanel
               title={`${method.title} · 挂钩维度`}
@@ -173,6 +207,17 @@ export function TeachSession() {
           </div>
           {isChunking ? (
             <GroupingHintPanel chunks={paper.chunks} visible mode="tagsOnly" />
+          ) : method.id === 'palace' ? (
+            <PalaceRouteCard
+              pegs={palacePegs}
+              scenes={confirmedScenes}
+              placements={scenePlacements}
+              selectedId={selectedSceneId}
+              onSelect={setSelectedSceneId}
+              onPlace={placeScene}
+              mode="recall"
+              revealed={false}
+            />
           ) : (
             <MethodHintPanel
               title={`${method.title}提示`}
@@ -215,6 +260,18 @@ export function TeachSession() {
             </strong>
           </div>
           <p className="muted">教学不计正式分。可回方法列表继续学，或去练听力巩固。</p>
+          {method.id === 'palace' && (
+            <PalaceRouteCard
+              pegs={palacePegs}
+              scenes={confirmedScenes}
+              placements={scenePlacements}
+              selectedId={null}
+              onSelect={() => {}}
+              onPlace={() => {}}
+              mode="recall"
+              revealed
+            />
+          )}
           <Link to="/methods" className="btn-primary">
             返回方法列表
           </Link>

@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StudioShell } from '../../components/StudioShell';
+import { PegPicture } from '../../components/PegPicture';
+import { SceneTray } from '../../components/SceneTray';
 import {
   DEFAULT_HOME_ROUTE,
   MAX_PER_SITE,
@@ -8,6 +10,13 @@ import {
   type PalacePoint,
   type PalaceSite,
 } from '../../data/palaceStudio';
+import {
+  imageUrlForPeg,
+  loadConfirmedScenes,
+  placeConfirmedImage,
+  sceneIdFromDrop,
+  type ConfirmedScene,
+} from '../../lib/confirmedScenes';
 
 type Phase = 'route' | 'place' | 'walk' | 'done';
 
@@ -25,6 +34,16 @@ export function PalaceStudio() {
   const [revealed, setRevealed] = useState(false);
   const [guesses, setGuesses] = useState<Record<string, string[]>>({});
   const [walkScores, setWalkScores] = useState<boolean[]>([]);
+  const [scenes] = useState<ConfirmedScene[]>(() => loadConfirmedScenes());
+  const [imagePlacements, setImagePlacements] = useState<Record<string, string>>({});
+  const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
+
+  const allowedSceneIds = scenes.map((s) => s.id);
+
+  const placeScene = (pegId: string, sceneId: string) => {
+    setImagePlacements((prev) => placeConfirmedImage(prev, pegId, sceneId, allowedSceneIds));
+    setSelectedSceneId(null);
+  };
 
   const placedIds = useMemo(
     () => new Set(Object.values(placements).flat()),
@@ -109,6 +128,8 @@ export function PalaceStudio() {
     setRevealed(false);
     setGuesses({});
     setWalkScores([]);
+    setImagePlacements({});
+    setSelectedSceneId(null);
   };
 
   if (phase === 'route') {
@@ -188,18 +209,39 @@ export function PalaceStudio() {
                 <button
                   key={s.id}
                   type="button"
-                  onClick={() => placeOnSite(s.id)}
+                  onClick={() => {
+                    if (selectedSceneId) {
+                      placeScene(s.id, selectedSceneId);
+                      return;
+                    }
+                    placeOnSite(s.id);
+                  }}
+                  onDragOver={(e) => {
+                    e.preventDefault();
+                  }}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const id = sceneIdFromDrop(e.dataTransfer, allowedSceneIds);
+                    if (id) placeScene(s.id, id);
+                  }}
                   className="card"
                   style={{
                     textAlign: 'left',
                     border:
-                      selectedPoint && !full
+                      selectedSceneId || (selectedPoint && !full)
                         ? '2px solid var(--color-primary)'
                         : '1px solid #E2E8F0',
-                    cursor: selectedPoint && !full ? 'pointer' : 'default',
+                    cursor: selectedSceneId || (selectedPoint && !full) ? 'pointer' : 'default',
                   }}
                 >
                   <div className="row" style={{ gap: 10, marginBottom: 6 }}>
+                    <PegPicture
+                      phase="place"
+                      revealed={false}
+                      imageUrl={imageUrlForPeg(imagePlacements, s.id, scenes)}
+                      text=""
+                    />
                     <span
                       style={{
                         width: 28,
@@ -245,6 +287,12 @@ export function PalaceStudio() {
             })}
           </div>
         </div>
+
+        <SceneTray
+          scenes={scenes}
+          selectedId={selectedSceneId}
+          onSelect={setSelectedSceneId}
+        />
 
         <div className="card stack">
           <div style={{ fontWeight: 700 }}>待放要点池</div>
@@ -308,6 +356,16 @@ export function PalaceStudio() {
           <div className="page-title" style={{ fontSize: 22 }}>
             {site.name}
           </div>
+          <PegPicture
+            phase="recall"
+            revealed={revealed}
+            imageUrl={imageUrlForPeg(imagePlacements, site.id, scenes)}
+            text={
+              truth.length
+                ? truth.map((p) => `${p.label}·${p.text}`).join('、')
+                : (scenes.find((sc) => sc.id === imagePlacements[site.id])?.sentence ?? '')
+            }
+          />
           {!revealed ? (
             <>
               <p style={{ fontWeight: 700 }}>这里放了什么？</p>

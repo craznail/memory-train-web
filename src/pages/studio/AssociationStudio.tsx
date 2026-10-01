@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { StudioShell } from '../../components/StudioShell';
 import { ASSOC_DEMOS, prefabImageUrl } from '../../data/associationStudio';
+import { acceptScene } from '../../lib/confirmedScenes';
 import {
   DAILY_LIMIT_HINT,
   SWAP_EXHAUSTED_HINT,
@@ -12,6 +13,7 @@ import {
   isConfigured,
   loadImageGenPrefs,
   type FallbackReason,
+  type GenerateOutcome,
 } from '../../lib/imageGen';
 
 type Phase = 'demo' | 'create' | 'result' | 'compare';
@@ -36,6 +38,7 @@ export function AssociationStudio() {
   const [hint, setHint] = useState<string | null>(null);
   const [swapCount, setSwapCount] = useState(0);
   const [quotaTick, setQuotaTick] = useState(0);
+  const [sceneKind, setSceneKind] = useState<GenerateOutcome['kind'] | null>(null);
 
   const demoUrl = prefabImageUrl(demo.imageSeed);
 
@@ -61,6 +64,7 @@ export function AssociationStudio() {
 
     setLoading(false);
     setMyUrl(outcome.url);
+    setSceneKind(outcome.kind);
     setSwapCount(nextSwapCount);
     setQuotaTick((n) => n + 1);
 
@@ -83,13 +87,22 @@ export function AssociationStudio() {
   };
 
   const onAccept = () => {
-    if (!myUrl) return;
+    if (!myUrl || !sceneKind) return;
+    // Only the picture the user confirms enters the palace tray.
+    // Swapped-away shots are never passed here; fallbacks are ignored inside acceptScene.
+    acceptScene({
+      url: myUrl,
+      sentence: text.trim(),
+      kind: sceneKind,
+      confirmed: true,
+    });
     setPhase('compare');
   };
 
   const resetToCreate = () => {
     setPhase('create');
     setMyUrl(null);
+    setSceneKind(null);
     setHint(null);
     setSwapCount(0);
     setQuotaTick((n) => n + 1);
