@@ -20,11 +20,13 @@ import settingsIcon from '../assets/icons/icon-entry-settings.svg';
 
 /** Home studio cards: short names + descriptions from Chole's reference image. */
 // Lines wrap only at the \u200B phrase breaks (word-break: keep-all), so narrow cards never split a word.
+/** Reference two-line descriptions (rendered one span per line = <br>). ZWSP marks the only allowed
+ *  phrase breaks for 320px, where a line may wrap (max 3 lines). */
 const HOME_STUDIOS: { studio: StudioKey; to: string; title: string; lines: string[] }[] = [
-  { studio: 'imagery', to: '/studio/imagery', title: '成像', lines: ['在脑中\u200B构建画面\u200B让信息\u200B更深刻'] },
-  { studio: 'encoding', to: '/studio/encoding', title: '编码', lines: ['把数字、文字\u200B变成\u200B有意义的\u200B代码'] },
-  { studio: 'association', to: '/studio/association', title: '联想', lines: ['把新信息\u200B与熟悉的\u200B事物\u200B联系起来'] },
-  { studio: 'palace', to: '/studio/palace', title: '宫殿', lines: ['在熟悉的\u200B空间中\u200B建立\u200B记忆线索'] },
+  { studio: 'imagery', to: '/studio/imagery', title: '成像', lines: ['在脑中\u200B构建画面', '让信息\u200B更深刻'] },
+  { studio: 'encoding', to: '/studio/encoding', title: '编码', lines: ['把数字、\u200B文字', '变成\u200B有意义的代码'] },
+  { studio: 'association', to: '/studio/association', title: '联想', lines: ['把新信息\u200B与熟悉的', '事物\u200B联系起来'] },
+  { studio: 'palace', to: '/studio/palace', title: '宫殿', lines: ['在熟悉的\u200B空间中', '建立\u200B记忆线索'] },
 ];
 
 const Chevron = ({ color = '#6B5449' }: { color?: string }) => (
