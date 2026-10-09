@@ -1,10 +1,21 @@
-/** BYOK OpenAI-compatible image generation + local quotas (localStorage only). */
+/** BYOK image generation (OpenAI-compatible or Tongyi/DashScope) + local quotas (localStorage only). */
 
 import { prefabImageUrl } from '../data/associationStudio';
+import { TONGYI_DEFAULT_BASE_URL, TONGYI_DEFAULT_MODEL, tongyiGenerateImage } from './tongyi';
 
+export type ImageProvider = 'openai' | 'tongyi';
+
+export const DEFAULT_PROVIDER: ImageProvider = 'openai';
 export const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
-/** Model is not exposed in Settings UI. */
 export const DEFAULT_MODEL = 'gpt-image-1';
+
+export const PROVIDER_DEFAULTS: Record<
+  ImageProvider,
+  { label: string; baseUrl: string; model: string }
+> = {
+  openai: { label: 'OpenAI 兼容', baseUrl: DEFAULT_BASE_URL, model: DEFAULT_MODEL },
+  tongyi: { label: '通义', baseUrl: TONGYI_DEFAULT_BASE_URL, model: TONGYI_DEFAULT_MODEL },
+};
 export const DAILY_LIMIT = 20;
 /** Max 「换一张」 clicks per association sentence. */
 export const MAX_SWAPS_PER_SENTENCE = 3;
@@ -23,8 +34,39 @@ const PREFS_KEY = 'mt-image-gen-prefs';
 const DAILY_KEY = 'mt-image-gen-daily';
 
 export interface ImageGenPrefs {
+  /** Missing in prefs saved before issue #2 → treated as 'openai'. */
+  provider?: ImageProvider;
   baseUrl: string;
+  /** Missing in old prefs → provider default model. */
+  model?: string;
   apiKey: string;
+}
+
+export interface ResolvedImageGenPrefs {
+  provider: ImageProvider;
+  baseUrl: string;
+  model: string;
+  apiKey: string;
+}
+
+function isProvider(v: unknown): v is ImageProvider {
+  return v === 'openai' || v === 'tongyi';
+}
+
+/** Fill provider/model/baseUrl defaults (also migrates pre-#2 `{ baseUrl, apiKey }` prefs). */
+export function resolveImageGenPrefs(
+  prefs: Partial<ImageGenPrefs> | null | undefined,
+): ResolvedImageGenPrefs {
+  const provider = isProvider(prefs?.provider) ? prefs!.provider! : DEFAULT_PROVIDER;
+  const d = PROVIDER_DEFAULTS[provider];
+  const baseUrl = typeof prefs?.baseUrl === 'string' ? prefs.baseUrl.trim() : '';
+  const model = typeof prefs?.model === 'string' ? prefs.model.trim() : '';
+  return {
+    provider,
+    baseUrl: baseUrl || d.baseUrl,
+    model: model || d.model,
+    apiKey: typeof prefs?.apiKey === 'string' ? prefs.apiKey : '',
+  };
 }
 
 export interface DailyUsage {
@@ -61,17 +103,15 @@ export function localDateKey(now: Date = new Date()): string {
   return `${y}-${m}-${d}`;
 }
 
-export function loadImageGenPrefs(storage: StorageLike | null = defaultStorage()): ImageGenPrefs {
-  const empty: ImageGenPrefs = { baseUrl: DEFAULT_BASE_URL, apiKey: '' };
+export function loadImageGenPrefs(
+  storage: StorageLike | null = defaultStorage(),
+): ResolvedImageGenPrefs {
+  const empty = resolveImageGenPrefs(null);
   if (!storage) return empty;
   try {
     const raw = storage.getItem(PREFS_KEY);
     if (!raw) return empty;
-    const parsed = JSON.parse(raw) as Partial<ImageGenPrefs>;
-    return {
-      baseUrl: (parsed.baseUrl || DEFAULT_BASE_URL).trim() || DEFAULT_BASE_URL,
-      apiKey: typeof parsed.apiKey === 'string' ? parsed.apiKey : '',
-    };
+    return resolveImageGenPrefs(JSON.parse(raw) as Partial<ImageGenPrefs>);
   } catch {
     return empty;
   }
@@ -82,10 +122,7 @@ export function saveImageGenPrefs(
   storage: StorageLike | null = defaultStorage(),
 ): void {
   if (!storage) return;
-  const next: ImageGenPrefs = {
-    baseUrl: prefs.baseUrl.trim() || DEFAULT_BASE_URL,
-    apiKey: prefs.apiKey,
-  };
+  const next: ResolvedImageGenPrefs = resolveImageGenPrefs(prefs);
   storage.setItem(PREFS_KEY, JSON.stringify(next));
 }
 
@@ -94,7 +131,7 @@ export function clearImageGenPrefs(storage: StorageLike | null = defaultStorage(
   storage.removeItem(PREFS_KEY);
 }
 
-export function isConfigured(prefs: ImageGenPrefs = loadImageGenPrefs()): boolean {
+export function isConfigured(prefs: Pick<ImageGenPrefs, 'apiKey'> = loadImageGenPrefs()): boolean {
   return prefs.apiKey.trim().length > 0;
 }
 
@@ -190,6 +227,8 @@ export async function generateAssociationScene(options: {
   seedSuffix?: string;
   /** Override request timeout (ms). Defaults to REQUEST_TIMEOUT_MS. */
   timeoutMs?: number;
+  /** Tongyi async task poll interval (ms); tests shorten it. */
+  pollIntervalMs?: number;
 }): Promise<GenerateOutcome> {
   const sentence = options.sentence.trim();
   const seed = `${sentence || 'assoc'}-${options.seedSuffix ?? '0'}`;
@@ -212,12 +251,31 @@ export async function generateAssociationScene(options: {
   }
 
   const fetchFn = options.fetchFn ?? fetch;
-  const model = options.model ?? DEFAULT_MODEL;
-  const endpoint = `${normalizeBaseUrl(prefs.baseUrl)}/images/generations`;
+  const resolved = resolveImageGenPrefs(prefs);
+  const model = options.model ?? resolved.model;
   const timeoutMs = options.timeoutMs ?? REQUEST_TIMEOUT_MS;
 
   // Record attempt before the request so flaky/spam calls still consume quota.
   recordGeneration(storage, now);
+
+  if (resolved.provider === 'tongyi') {
+    try {
+      const url = await tongyiGenerateImage({
+        baseUrl: resolved.baseUrl,
+        apiKey: resolved.apiKey,
+        model,
+        prompt: buildPrompt(sentence),
+        timeoutMs,
+        fetchFn,
+        pollIntervalMs: options.pollIntervalMs,
+      });
+      return { kind: 'api', url };
+    } catch {
+      return { kind: 'fallback', url: svg, reason: 'error' };
+    }
+  }
+
+  const endpoint = `${normalizeBaseUrl(resolved.baseUrl)}/images/generations`;
 
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);

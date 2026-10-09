@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { StudioShell } from '../../components/StudioShell';
 import { ASSOC_DEMOS, prefabImageUrl } from '../../data/associationStudio';
 import { acceptScene } from '../../lib/confirmedScenes';
+import { cacheSceneImage } from '../../lib/sceneImageCache';
 import {
   DAILY_LIMIT_HINT,
   SWAP_EXHAUSTED_HINT,
@@ -90,12 +91,14 @@ export function AssociationStudio() {
     if (!myUrl || !sceneKind) return;
     // Only the picture the user confirms enters the palace tray.
     // Swapped-away shots are never passed here; fallbacks are ignored inside acceptScene.
-    acceptScene({
+    const accepted = acceptScene({
       url: myUrl,
       sentence: text.trim(),
       kind: sceneKind,
       confirmed: true,
     });
+    // Keep a shrunk local copy so the palace still has it after the remote link expires.
+    if (accepted.scene && !accepted.scene.localCached) void cacheSceneImage(accepted.scene);
     setPhase('compare');
   };
 

@@ -150,6 +150,15 @@ a {
   border-color: var(--color-primary);
 }
 
+select.input-field {
+  appearance: none;
+  -webkit-appearance: none;
+  padding-right: 40px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+}
+
 .option-btn {
   display: block;
   width: 100%;
@@ -357,6 +366,7 @@ a {
 }
 
 .scene-thumb {
+  position: relative;
   padding: 0;
   flex: 0 0 auto;
   overflow: hidden;
@@ -371,6 +381,26 @@ a {
   border-radius: 12px;
   object-fit: cover;
   display: block;
+  pointer-events: none;
+}
+
+.scene-thumb > span[data-state='loading'] {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+}
+
+.scene-temp-badge {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.62);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 14px;
   pointer-events: none;
 }
 

@@ -9,7 +9,7 @@ import { fileURLToPath } from 'node:url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
-const OUT = '/workspace/memory-train-web-verify';
+const OUT = process.env.OUT_DIR || '/workspace/memory-train-web-verify';
 const FAKE_KEY = 'sk-test-FAKE-1234';
 const MOCK_PORT = 8787;
 const APP_PORT = 4173;

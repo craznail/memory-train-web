@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "npx --yes tsx --test src/lib/imageGen.test.ts src/lib/confirmedScenes.test.ts"
+    "test": "npx --yes tsx --test src/lib/imageGen.test.ts src/lib/tongyi.test.ts src/lib/confirmedScenes.test.ts src/lib/sceneImageCache.test.ts"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.2",
