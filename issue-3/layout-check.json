@@ -1,0 +1,199 @@
+[
+  {
+    "width": 375,
+    "ok": true,
+    "heroTextRight": 186.015625,
+    "heroHeight": 186,
+    "cards": [
+      {
+        "title": "成像",
+        "textPct": 53.8,
+        "overlap": false,
+        "artInside": true
+      },
+      {
+        "title": "编码",
+        "textPct": 47.4,
+        "overlap": false,
+        "artInside": true
+      },
+      {
+        "title": "联想",
+        "textPct": 47.4,
+        "overlap": false,
+        "artInside": true
+      },
+      {
+        "title": "宫殿",
+        "textPct": 53.8,
+        "overlap": false,
+        "artInside": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "分组",
+        "desc": "把杂乱变有序",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      },
+      {
+        "name": "联想",
+        "desc": "让记忆更生动",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      },
+      {
+        "name": "故事",
+        "desc": "用故事串信息",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      },
+      {
+        "name": "编码",
+        "desc": "把信息变代码",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      },
+      {
+        "name": "成像",
+        "desc": "在脑中看见它",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      },
+      {
+        "name": "记忆宫殿",
+        "desc": "建立记忆宫殿",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      }
+    ],
+    "stripScrolls": false,
+    "clipped": [],
+    "pageHScroll": false
+  },
+  {
+    "width": 320,
+    "ok": true,
+    "heroTextRight": 173.015625,
+    "heroHeight": 186,
+    "cards": [
+      {
+        "title": "成像",
+        "textPct": 41.3,
+        "overlap": false,
+        "artInside": true
+      },
+      {
+        "title": "编码",
+        "textPct": 41.3,
+        "overlap": false,
+        "artInside": true
+      },
+      {
+        "title": "联想",
+        "textPct": 41.3,
+        "overlap": false,
+        "artInside": true
+      },
+      {
+        "title": "宫殿",
+        "textPct": 48.9,
+        "overlap": false,
+        "artInside": true
+      }
+    ],
+    "methods": [
+      {
+        "name": "分组",
+        "desc": "(name only)",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      },
+      {
+        "name": "联想",
+        "desc": "(name only)",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      },
+      {
+        "name": "故事",
+        "desc": "(name only)",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      },
+      {
+        "name": "编码",
+        "desc": "(name only)",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      },
+      {
+        "name": "成像",
+        "desc": "(name only)",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      },
+      {
+        "name": "记忆宫殿",
+        "desc": "(name only)",
+        "fontSize": 10,
+        "oneLine": true,
+        "noCollision": true,
+        "inStrip": true,
+        "notClipped": true,
+        "visible": true
+      }
+    ],
+    "stripScrolls": false,
+    "clipped": [
+      "看看你的进步",
+      "个性化你的训练体验"
+    ],
+    "pageHScroll": false
+  }
+]
