@@ -257,10 +257,10 @@
         "artFullHeight": true,
         "artAnchored": true,
         "textPct": 62.3,
-        "opaqueArtPct": 72,
+        "opaqueArtPct": 64.1,
         "textOnOpaqueArt": false,
-        "minContrast": 5.57,
-        "maxArtDeltaBehindText": 25,
+        "minContrast": 6.66,
+        "maxArtDeltaBehindText": 0,
         "perLine": [
           {
             "minContrast": 16.04,
@@ -268,12 +268,9 @@
             "at": null
           },
           {
-            "minContrast": 5.57,
-            "artDelta": 25,
-            "at": [
-              87.5,
-              52
-            ]
+            "minContrast": 6.71,
+            "artDelta": 0,
+            "at": null
           },
           {
             "minContrast": 6.66,
@@ -298,7 +295,7 @@
         "artFullHeight": true,
         "artAnchored": true,
         "textPct": 54.8,
-        "opaqueArtPct": 72,
+        "opaqueArtPct": 64.1,
         "textOnOpaqueArt": false,
         "minContrast": 6.49,
         "maxArtDeltaBehindText": 0,
@@ -341,7 +338,7 @@
         "artFullHeight": true,
         "artAnchored": true,
         "textPct": 54.8,
-        "opaqueArtPct": 72,
+        "opaqueArtPct": 64.1,
         "textOnOpaqueArt": false,
         "minContrast": 6.6,
         "maxArtDeltaBehindText": 0,
@@ -384,10 +381,10 @@
         "artFullHeight": true,
         "artAnchored": true,
         "textPct": 62.3,
-        "opaqueArtPct": 72,
+        "opaqueArtPct": 64.1,
         "textOnOpaqueArt": false,
-        "minContrast": 5.55,
-        "maxArtDeltaBehindText": 50,
+        "minContrast": 6.64,
+        "maxArtDeltaBehindText": 0,
         "perLine": [
           {
             "minContrast": 16.04,
@@ -395,12 +392,9 @@
             "at": null
           },
           {
-            "minContrast": 5.55,
-            "artDelta": 50,
-            "at": [
-              87.5,
-              49.5
-            ]
+            "minContrast": 6.69,
+            "artDelta": 0,
+            "at": null
           },
           {
             "minContrast": 6.64,
@@ -479,6 +473,6 @@
     ],
     "pageHScroll": false,
     "sameRowEqual": true,
-    "minTextContrast": 5.55
+    "minTextContrast": 6.49
   }
 ]
