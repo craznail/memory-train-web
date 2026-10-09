@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="练听力">
+  <defs><linearGradient id="t" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFEBD3"/><stop offset="1" stop-color="#FDDDB7"/></linearGradient>
+  <linearGradient id="o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F58A35"/><stop offset="1" stop-color="#D9531A"/></linearGradient></defs>
+  <rect width="48" height="48" rx="12" fill="url(#t)"/>
+  <path d="M14 27v-3a10 10 0 0 1 20 0v3" fill="none" stroke="url(#o)" stroke-width="3" stroke-linecap="round"/><rect x="12" y="25" width="6.5" height="10" rx="3" fill="url(#o)"/><rect x="29.5" y="25" width="6.5" height="10" rx="3" fill="url(#o)"/>
+</svg>

@@ -107,3 +107,45 @@ export function dailyProgressLabel(plan: DailyPlan): string {
   if (plan.completed) return `今日已完成 ${done}/3 · 可重练`;
   return `今日进度 ${done}/3 · 约10～15分钟`;
 }
+
+export interface DailyProgress {
+  /** Rounds marked done today (0..total) */
+  done: number;
+  total: number;
+  completed: boolean;
+  /** True when a plan for today already exists in storage */
+  hasPlan: boolean;
+}
+
+type ReadableStorage = Pick<Storage, 'getItem'>;
+
+/**
+ * Read-only: today's stored plan, or null. Unlike `loadOrCreateDailyPlan`
+ * this NEVER builds, repairs or saves a plan and never writes to storage.
+ */
+export function peekDailyPlan(
+  date: string = localDateKey(),
+  storage: ReadableStorage | undefined = globalThis.localStorage,
+): DailyPlan | null {
+  if (!storage) return null;
+  try {
+    const raw = storage.getItem(storageKey(date));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as DailyPlan;
+    if (parsed?.date !== date || !Array.isArray(parsed.rounds) || parsed.rounds.length !== 3) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+/** Home page progress (0/3 when there is no plan yet). Read-only, see `peekDailyPlan`. */
+export function peekDailyProgress(
+  date: string = localDateKey(),
+  storage: ReadableStorage | undefined = globalThis.localStorage,
+): DailyProgress {
+  const plan = peekDailyPlan(date, storage);
+  if (!plan) return { done: 0, total: 3, completed: false, hasPlan: false };
+  const done = plan.rounds.filter((r) => r && r.done === true).length;
+  return { done, total: 3, completed: Boolean(plan.completed) || done === 3, hasPlan: true };
+}

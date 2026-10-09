@@ -1,14 +1,69 @@
+/* memory-train-web · 视觉 v2（按 Chole 参考图 home-ref.png 量取）
+   沿用现有变量名（--color-primary / --color-bg / --color-card / --color-text / --color-text-secondary /
+   --color-success / --color-error / --radius-md / --radius-lg / --font-title / --font-body / --font-aux），新增变量带注释。 */
 :root {
-  --color-primary: #3B82F6;
-  --color-bg: #F8FAFC;
-  --color-card: #FFFFFF;
-  --color-text: #0F172A;
-  --color-text-secondary: #64748B;
-  --color-success: #22C55E;
-  --color-error: #EF4444;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --font-title: 20px;
-  --font-body: 16px;
+  /* ---- 现有变量名 ---- */
+  --color-primary: #C24A14;            /* 实色主色：白字任意字号 4.90:1（.btn-primary 16px 也达标） */
+  --color-bg: #FDF6ED;                 /* 参考图取色 #FDF6ED */
+  --color-card: #FFF9F2;               /* 卡片底（叠加 --gradient-card 使用） */
+  --color-text: #2B1A12;               /* 标题/正文深棕（参考图墨色约 #1C0000–#2A0C03，取柔和值） */
+  --color-text-secondary: #6B5449;     /* 副标题（参考图 #68534A–#6D5A50） */
+  --color-success: #2A7343;
+  --color-error: #B03A2E;
+  --radius-md: 16px;                   /* 小卡（测听力 / 练习台 / 底部入口） */
+  --radius-lg: 20px;                   /* 主卡（今日训练）、方法条面板 */
+  --font-title: 26px;                  /* 页面大标题 */
+  --font-body: 14px;
   --font-aux: 13px;
+
+  /* ---- 新增：色彩 ---- */
+  --color-bg-top: #FEF8F0;
+  --color-bg-bottom: #FDF3E7;
+  --color-text-tertiary: #7A6A62;      /* 方法副标/说明小字（参考 #79675E），≥4.5:1 */
+  --color-primary-text: #B04A12;       /* 奶油底上的橙色小字/链接 4.73:1 */
+  --color-primary-score: #CF5A0B;      /* 记忆分数字，20px/800 大字 3.80:1（参考 #E2680E 3.13:1 且只有 17px，不达标） */
+  --gradient-primary: linear-gradient(180deg, #E66A20 0%, #D2561A 100%); /* 参考 #F48127→#E5601C；只配 ≥19px 粗体白字（大字 3:1，最浅处 3.26:1） */
+  --color-primary-soft: #FEE6C8;       /* 图标底块（参考 #FDE6CA / #FEE3BF） */
+  --color-border-input: #9C8573;      /* 输入框/可编辑项边框 3.4:1（参考图无输入框；现有 #E2E8F0 只有 1.2:1） */
+  --color-track: #F6CFA9;
+  --color-connector: #F6C9A0;
+  --color-success-soft: #E4F3E6;
+  --color-error-soft: #FDE8E2;
+
+  /* ---- 卡片质感 ---- */
+  --gradient-card: linear-gradient(180deg, #FFFCF7 0%, #FEF5EA 100%);
+  --border-card: 1px solid rgba(255, 255, 255, 0.85);
+  --shadow-card: 0 1px 2px rgba(190, 110, 50, 0.08), 0 8px 20px -10px rgba(190, 110, 50, 0.28);
+  --shadow-hero: 0 2px 4px rgba(190, 110, 50, 0.08), 0 14px 30px -14px rgba(190, 110, 50, 0.40);
+  --shadow-button: 0 6px 14px -6px rgba(214, 88, 26, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  --shadow-badge: 0 4px 12px -6px rgba(190, 110, 50, 0.30);
+
+  /* ---- 圆角 ---- */
+  --radius-sm: 12px;                   /* 图标底块 */
+  --radius-pill: 999px;
+
+  /* ---- 字体 ---- */
+  --font-serif: "Source Han Serif SC", "Noto Serif SC", "Noto Serif CJK SC", "Songti SC", "STSong", serif;
+  --font-sans: "PingFang SC", "HarmonyOS Sans SC", "Noto Sans SC", "Noto Sans CJK SC", "Microsoft YaHei", system-ui, sans-serif;
+  --font-hero: 28px;                   /* 今日训练 */
+  --font-section: 22px;                /* 学方法 / 练习台 */
+  --font-card-title: 20px;             /* 测听力 */
+  --font-studio-title: 18px;           /* 练习台卡（名称比参考图长，18px 才放得下） */
+  --font-label: 13px;
+  --font-caption: 12px;
+  --font-button: 19px;
+
+  /* ---- 间距 ---- */
+  --page-x: 14px;                      /* 卡片左右边距 */
+  --text-x: 20px;                      /* 页面标题左缩进 */
+  --gap-card: 12px;
+  --gap-grid: 10px;
+  --gap-section: 18px;
+
+  /* ---- 动效 ---- */
+  --dur-press: 120ms;
+  --dur-fade: 220ms;
+  --dur-enter: 320ms;
+  --ease-out: cubic-bezier(0.22, 0.8, 0.24, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 }

@@ -1,37 +1,42 @@
 import type { ScoreBreakdown } from '../types';
 import { formatScoreDate } from '../lib/storage';
+import scoreBars from '../assets/icons/icon-score-bars.svg';
 
 interface Props {
   score: ScoreBreakdown | null;
 }
 
+/** Home header 「记忆分」 badge (visual v2). Same data as before: latest.overall. */
 export function ScoreCard({ score }: Props) {
+  const label = score
+    ? `记忆分 ${score.overall}，上次测评 ${formatScoreDate(score.date)}`
+    : '记忆分：完成一次「测听力」后生成分数';
   return (
-    <div className="card score-card">
-      <div className="muted" style={{ marginBottom: 4 }}>
-        听力记忆分
-      </div>
-      <div className="score-big">{score ? score.overall : '—'}</div>
-      {score ? (
-        <div className="stack" style={{ gap: 4, marginTop: 8 }}>
-          <div className="muted">
-            听觉 {score.auditory} · 抗干扰 {score.antiInterference}
-          </div>
-          <div className="muted">上次测评 {formatScoreDate(score.date)}</div>
-        </div>
-      ) : (
-        <div className="muted" style={{ marginTop: 8 }}>
-          完成一次「测听力」后生成分数
-        </div>
-      )}
+    <div className="score-badge" role="img" aria-label={label} title={label}>
+      <img src={scoreBars} alt="" aria-hidden="true" width={15} height={15} />
+      <span className="score-badge-label">记忆分</span>
+      <span className="score-badge-num">{score ? score.overall : '—'}</span>
       <style>{`
-        .score-card { text-align: center; padding: 20px 16px; }
-        .score-big {
-          font-size: 56px;
+        .score-badge {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          height: 30px;
+          padding: 0 12px;
+          margin-top: 2px;
+          border-radius: var(--radius-pill);
+          background: linear-gradient(180deg, #FFFBF5, #FEF2E4);
+          border: 1px solid rgba(255, 255, 255, 0.9);
+          box-shadow: var(--shadow-badge);
+          flex-shrink: 0;
+        }
+        .score-badge-label { font-size: var(--font-aux); color: var(--color-text); }
+        .score-badge-num {
+          font-size: 20px;
           font-weight: 800;
           line-height: 1;
-          color: var(--color-primary);
-          letter-spacing: -1px;
+          color: var(--color-primary-score);
+          min-width: 1ch;
         }
       `}</style>
     </div>
