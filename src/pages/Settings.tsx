@@ -2,13 +2,15 @@ import { useMemo, useState } from 'react';
 import { Layout } from '../components/Layout';
 import {
   DAILY_LIMIT,
-  DEFAULT_BASE_URL,
+  PROVIDER_DEFAULTS,
   clearImageGenPrefs,
   getDailyCount,
   isConfigured,
   loadImageGenPrefs,
+  resolveImageGenPrefs,
   saveImageGenPrefs,
-  type ImageGenPrefs,
+  type ImageProvider,
+  type ResolvedImageGenPrefs,
 } from '../lib/imageGen';
 
 function EyeOpenIcon() {
@@ -42,23 +44,32 @@ function EyeClosedIcon() {
 
 export function Settings() {
   const initial = useMemo(() => loadImageGenPrefs(), []);
-  const [baseUrl, setBaseUrl] = useState(initial.baseUrl || DEFAULT_BASE_URL);
+  const [provider, setProvider] = useState<ImageProvider>(initial.provider);
+  const [baseUrl, setBaseUrl] = useState(initial.baseUrl);
+  const [model, setModel] = useState(initial.model);
   const [apiKey, setApiKey] = useState(initial.apiKey);
   const [showKey, setShowKey] = useState(false);
-  const [savedPrefs, setSavedPrefs] = useState<ImageGenPrefs>(initial);
+  const [savedPrefs, setSavedPrefs] = useState<ResolvedImageGenPrefs>(initial);
+  const defaults = PROVIDER_DEFAULTS[provider];
+
+  const onProviderChange = (next: ImageProvider) => {
+    if (next === provider) return;
+    setProvider(next);
+    // Switching provider brings in that provider's official endpoint and default model.
+    setBaseUrl(PROVIDER_DEFAULTS[next].baseUrl);
+    setModel(PROVIDER_DEFAULTS[next].model);
+  };
   const [dailyCount, setDailyCount] = useState(() => getDailyCount());
   const [savedFlash, setSavedFlash] = useState(false);
 
   const configured = isConfigured(savedPrefs);
 
   const onSave = () => {
-    const next: ImageGenPrefs = {
-      baseUrl: baseUrl.trim() || DEFAULT_BASE_URL,
-      apiKey: apiKey.trim(),
-    };
+    const next = resolveImageGenPrefs({ provider, baseUrl, model, apiKey: apiKey.trim() });
     saveImageGenPrefs(next);
     setSavedPrefs(next);
     setBaseUrl(next.baseUrl);
+    setModel(next.model);
     setApiKey(next.apiKey);
     setDailyCount(getDailyCount());
     setSavedFlash(true);
@@ -67,9 +78,11 @@ export function Settings() {
 
   const onClear = () => {
     clearImageGenPrefs();
-    const empty: ImageGenPrefs = { baseUrl: DEFAULT_BASE_URL, apiKey: '' };
+    const empty = resolveImageGenPrefs(null);
     setSavedPrefs(empty);
-    setBaseUrl(DEFAULT_BASE_URL);
+    setProvider(empty.provider);
+    setBaseUrl(empty.baseUrl);
+    setModel(empty.model);
     setApiKey('');
     setShowKey(false);
     setDailyCount(getDailyCount());
@@ -102,6 +115,36 @@ export function Settings() {
         </div>
 
         <label className="stack" style={{ gap: 6 }}>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>服务商</span>
+          <select
+            className="input-field"
+            aria-label="服务商"
+            value={provider}
+            onChange={(e) => onProviderChange(e.target.value as ImageProvider)}
+          >
+            {(Object.keys(PROVIDER_DEFAULTS) as ImageProvider[]).map((id) => (
+              <option key={id} value={id}>
+                {PROVIDER_DEFAULTS[id].label}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="stack" style={{ gap: 6 }}>
+          <span style={{ fontWeight: 600, fontSize: 14 }}>模型</span>
+          <input
+            className="input-field"
+            type="text"
+            aria-label="模型"
+            autoComplete="off"
+            spellCheck={false}
+            value={model}
+            onChange={(e) => setModel(e.target.value)}
+            placeholder={defaults.model}
+          />
+        </label>
+
+        <label className="stack" style={{ gap: 6 }}>
           <span style={{ fontWeight: 600, fontSize: 14 }}>接口地址</span>
           <input
             className="input-field"
@@ -110,7 +153,8 @@ export function Settings() {
             spellCheck={false}
             value={baseUrl}
             onChange={(e) => setBaseUrl(e.target.value)}
-            placeholder={DEFAULT_BASE_URL}
+            aria-label="接口地址"
+            placeholder={defaults.baseUrl}
           />
         </label>
 
