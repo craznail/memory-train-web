@@ -23,14 +23,14 @@ interface Props {
   title: string;
   /** Rendered one per line */
   lines: string[];
-  /** home: 100 tall, art 96×80 · methods: 122 tall, art 116×96 */
+  /** home: auto height, art 64×54, no overlap · methods: 100 tall, art 96×80 (methods.png) */
   size?: 'home' | 'methods';
 }
 
 /** 2×2 illustrated studio card (home 练习台, reused on /methods in #4). */
 export function StudioCard({ studio, to, title, lines, size = 'home' }: Props) {
   const art = STUDIO_ART[studio];
-  const [w, h] = size === 'methods' ? [116, 96] : [64, 54];
+  const [w, h] = size === 'methods' ? [96, 80] : [64, 54];
   return (
     <Link
       to={to}
@@ -67,7 +67,7 @@ export function StudioCard({ studio, to, title, lines, size = 'home' }: Props) {
           padding: 11px 0 0 14px;
           min-width: 0;
         }
-        .studio-card--methods { height: 122px; padding-top: 14px; }
+        .studio-card--methods { height: 100px; }
         .studio-card-art {
           position: absolute;
           right: -4px;
