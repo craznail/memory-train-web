@@ -124,10 +124,11 @@ type ReadableStorage = Pick<Storage, 'getItem'>;
  * this NEVER builds, repairs or saves a plan and never writes to storage.
  */
 export function peekDailyPlan(
-  date: string = localDateKey(),
+  now: Date = new Date(),
   storage: ReadableStorage | undefined = globalThis.localStorage,
 ): DailyPlan | null {
   if (!storage) return null;
+  const date = localDateKey(now);
   try {
     const raw = storage.getItem(storageKey(date));
     if (!raw) return null;
@@ -141,10 +142,10 @@ export function peekDailyPlan(
 
 /** Home page progress (0/3 when there is no plan yet). Read-only, see `peekDailyPlan`. */
 export function peekDailyProgress(
-  date: string = localDateKey(),
+  now: Date = new Date(),
   storage: ReadableStorage | undefined = globalThis.localStorage,
 ): DailyProgress {
-  const plan = peekDailyPlan(date, storage);
+  const plan = peekDailyPlan(now, storage);
   if (!plan) return { done: 0, total: 3, completed: false, hasPlan: false };
   const done = plan.rounds.filter((r) => r && r.done === true).length;
   return { done, total: 3, completed: Boolean(plan.completed) || done === 3, hasPlan: true };
