@@ -1,0 +1,74 @@
+{
+ "no-preference": {
+  "enter": [
+   {
+    "anim": "enter-rise",
+    "dur": "0.32s",
+    "delay": "0s"
+   },
+   {
+    "anim": "enter-rise",
+    "dur": "0.32s",
+    "delay": "0.04s"
+   },
+   {
+    "anim": "enter-rise",
+    "dur": "0.32s",
+    "delay": "0.08s"
+   },
+   {
+    "anim": "enter-rise",
+    "dur": "0.32s",
+    "delay": "0.12s"
+   },
+   {
+    "anim": "enter-rise",
+    "dur": "0.32s",
+    "delay": "0.16s"
+   },
+   {
+    "anim": "enter-rise",
+    "dur": "0.32s",
+    "delay": "0.2s"
+   }
+  ],
+  "pressTransition": "transform, box-shadow 0.12s, 0.12s",
+  "pressedTransform": "matrix(0.98, 0, 0, 0.98, 0, 0)"
+ },
+ "reduce": {
+  "enter": [
+   {
+    "anim": "enter-fade",
+    "dur": "0.15s",
+    "delay": "0s"
+   },
+   {
+    "anim": "enter-fade",
+    "dur": "0.15s",
+    "delay": "0s"
+   },
+   {
+    "anim": "enter-fade",
+    "dur": "0.15s",
+    "delay": "0s"
+   },
+   {
+    "anim": "enter-fade",
+    "dur": "0.15s",
+    "delay": "0s"
+   },
+   {
+    "anim": "enter-fade",
+    "dur": "0.15s",
+    "delay": "0s"
+   },
+   {
+    "anim": "enter-fade",
+    "dur": "0.15s",
+    "delay": "0s"
+   }
+  ],
+  "pressTransition": "opacity, background-color, border-color, box-shadow, color, filter 0.15s",
+  "pressedTransform": "none"
+ }
+}
