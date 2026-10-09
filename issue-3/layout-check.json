@@ -232,6 +232,87 @@
     "stripScrolls": false,
     "clipped": [],
     "pageHScroll": false,
+    "heroGaps": [
+      {
+        "state": "0/3 开始",
+        "objectPosition": "50% 50%",
+        "subtitleFontPx": 13,
+        "progressText": "0/3",
+        "title": {
+          "textRight": 130,
+          "rowGap": 125.8,
+          "nearestGap": 115
+        },
+        "subtitle": {
+          "textRight": 185,
+          "rowGap": 54.6,
+          "nearestGap": 51.5
+        },
+        "progress": {
+          "textRight": 118,
+          "rowGap": 115.7,
+          "nearestGap": 115.7
+        },
+        "button": {
+          "textRight": 127,
+          "rowGap": 108.8,
+          "nearestGap": 97.7
+        }
+      },
+      {
+        "state": "2/3 继续",
+        "objectPosition": "50% 50%",
+        "subtitleFontPx": 13,
+        "progressText": "2/3",
+        "title": {
+          "textRight": 130,
+          "rowGap": 125.8,
+          "nearestGap": 115
+        },
+        "subtitle": {
+          "textRight": 185,
+          "rowGap": 54.6,
+          "nearestGap": 51.5
+        },
+        "progress": {
+          "textRight": 118,
+          "rowGap": 115.7,
+          "nearestGap": 115.7
+        },
+        "button": {
+          "textRight": 127,
+          "rowGap": 108.8,
+          "nearestGap": 97.7
+        }
+      },
+      {
+        "state": "3/3 今日已完成",
+        "objectPosition": "50% 50%",
+        "subtitleFontPx": 13,
+        "progressText": "3/3今日已完成",
+        "title": {
+          "textRight": 130,
+          "rowGap": 125.8,
+          "nearestGap": 115
+        },
+        "subtitle": {
+          "textRight": 185,
+          "rowGap": 54.6,
+          "nearestGap": 51.5
+        },
+        "progress": {
+          "textRight": 198,
+          "rowGap": 35.6,
+          "nearestGap": 35.6
+        },
+        "button": {
+          "textRight": 169,
+          "rowGap": 66.8,
+          "nearestGap": 55.9
+        }
+      }
+    ],
+    "heroSubtitleMinGap": 51.5,
     "sameRowEqual": true,
     "minTextContrast": 5.4
   },
@@ -472,6 +553,87 @@
       "个性化你的训练体验"
     ],
     "pageHScroll": false,
+    "heroGaps": [
+      {
+        "state": "0/3 开始",
+        "objectPosition": "55% 50%",
+        "subtitleFontPx": 12,
+        "progressText": "0/3",
+        "title": {
+          "textRight": 130,
+          "rowGap": 94,
+          "nearestGap": 83.9
+        },
+        "subtitle": {
+          "textRight": 172,
+          "rowGap": 36.9,
+          "nearestGap": 33.8
+        },
+        "progress": {
+          "textRight": 106,
+          "rowGap": 95.9,
+          "nearestGap": 95.9
+        },
+        "button": {
+          "textRight": 127,
+          "rowGap": 76.5,
+          "nearestGap": 66.4
+        }
+      },
+      {
+        "state": "2/3 继续",
+        "objectPosition": "55% 50%",
+        "subtitleFontPx": 12,
+        "progressText": "2/3",
+        "title": {
+          "textRight": 130,
+          "rowGap": 94,
+          "nearestGap": 83.9
+        },
+        "subtitle": {
+          "textRight": 172,
+          "rowGap": 36.9,
+          "nearestGap": 33.8
+        },
+        "progress": {
+          "textRight": 106,
+          "rowGap": 95.9,
+          "nearestGap": 95.9
+        },
+        "button": {
+          "textRight": 127,
+          "rowGap": 76.5,
+          "nearestGap": 66.4
+        }
+      },
+      {
+        "state": "3/3 今日已完成",
+        "objectPosition": "55% 50%",
+        "subtitleFontPx": 12,
+        "progressText": "3/3今日已完成",
+        "title": {
+          "textRight": 130,
+          "rowGap": 94,
+          "nearestGap": 83.9
+        },
+        "subtitle": {
+          "textRight": 172,
+          "rowGap": 36.9,
+          "nearestGap": 33.8
+        },
+        "progress": {
+          "textRight": 186,
+          "rowGap": 15.9,
+          "nearestGap": 15.9
+        },
+        "button": {
+          "textRight": 169,
+          "rowGap": 34.5,
+          "nearestGap": 25.7
+        }
+      }
+    ],
+    "heroSubtitleMinGap": 33.8,
     "sameRowEqual": true,
     "minTextContrast": 6.49
   }
