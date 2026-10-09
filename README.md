@@ -62,7 +62,14 @@ npm run preview
 - 新加坡地域 `https://dashscope-intl.aliyuncs.com`：提交接口允许跨域，但 `GET /tasks/{id}` 的预检返回 403。所以填国际站地址时，应用会自动改用同步接口 `POST /services/aigc/multimodal-generation/generation`（一次请求直接返回图片，同样允许跨域）。
 - OpenAI 兼容模式 `/compatible-mode/v1/images/generations` 只在业务空间专属域名（`https://{WorkspaceId}.cn-beijing.maas.aliyuncs.com`）上提供，未做跨域实测，不作为默认。
 - 如果以后阿里云收紧跨域，可选方案（都由用户自己部署，Key 不经过我们）：本机跑一个转发脚本；用户自己部署的 Cloudflare Worker 转发；或改用允许跨域的接口。本仓库不提供也不部署任何代理。
-- 通义返回的图片是 OSS 签名链接，**24 小时后失效**，且不允许跨域读取（不能在浏览器里转存成 base64）。已经「就用这张」放进宫殿待放区的通义图片，一天后会打不开。
+- 通义返回的图片是 OSS 签名链接，**24 小时后失效**。实测（2026-10-09，真实 Key）OSS 对带 Origin 的 GET 返回 `Access-Control-Allow-Origin: *`，浏览器 `fetch()` 能读到图片，所以可以在本机留一份副本（见下）。
+
+### 「就用这张」的图片本地副本
+
+- 点「就用这张」后，应用会下载这张图，缩到最长边 ≤ 512，转成 WebP，存进本机 IndexedDB（库名 `mt-scene-images`）。宫殿待放区和桩位读的是这份本地副本，远程链接过期也不影响。
+- 如果下载失败（比如服务商不允许跨域读取），这条记录会标成「临时图」：先照常显示远程图片，等链接失效、加载不出来时，改为显示带句子的示意图，不会出现裂图。
+- 以前存下的记录（`mt-confirmed-scenes` 里只有远程链接）会在第一次打开宫殿时自动补存；补存不了就按「临时图」处理。
+- 如果以后遇到不允许跨域的服务商，想长期保留图片，可以由用户自己部署一个转发（本机脚本或自己的 Cloudflare Worker）给图片加上跨域头。本仓库不提供代理。
 
 ## 目录结构
 

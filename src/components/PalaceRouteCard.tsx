@@ -6,6 +6,7 @@ import {
   sceneIdFromDrop,
   type ConfirmedScene,
 } from '../lib/confirmedScenes';
+import type { DisplayScene } from '../lib/sceneImageCache';
 
 export interface RoutePeg {
   id: string;
@@ -14,7 +15,7 @@ export interface RoutePeg {
 
 interface Props {
   pegs: readonly RoutePeg[];
-  scenes: readonly ConfirmedScene[];
+  scenes: readonly (ConfirmedScene | DisplayScene)[];
   placements: Record<string, string>;
   selectedId: string | null;
   onSelect: (id: string | null) => void;
@@ -75,7 +76,13 @@ export function PalaceRouteCard({
               }}
             >
               <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
-                <PegPicture phase={mode} revealed={revealed} imageUrl={imageUrl} text={text} />
+                <PegPicture
+                  phase={mode}
+                  revealed={revealed}
+                  imageUrl={imageUrl}
+                  text={text}
+                  fallbackUrl={scene && 'fallbackUrl' in scene ? scene.fallbackUrl : null}
+                />
                 {showSlip && <span style={slipStyle}>{peg.slip}</span>}
               </div>
             </div>

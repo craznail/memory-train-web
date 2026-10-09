@@ -194,10 +194,11 @@ async function main() {
   await gotoHash(page, '/studio/palace');
   await page.locator('.btn-primary').first().click();
   await page.locator('[data-testid="scene-tray"]').waitFor({ timeout: 5000 });
-  await wait(300);
+  await wait(1200);
   await shot(page, '06-palace-tray.png');
   const traySrc = await page.locator('.scene-thumb img').first().getAttribute('src').catch(() => null);
-  record('06-palace-tray', traySrc === sw.src, `tray img=${traySrc ? 'mock oss url' : 'none'}`);
+  // Since the local-copy change the tray reads the IndexedDB copy (blob:) instead of the remote URL.
+  record('06-palace-tray', !!traySrc && (traySrc.startsWith('blob:') || traySrc === sw.src), `tray img=${traySrc ? traySrc.split(':')[0] : 'none'}`);
 
   // 07–10 failures fall back to the SVG illustration
   async function failCase(file, mode, name) {

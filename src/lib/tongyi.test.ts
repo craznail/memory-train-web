@@ -128,7 +128,7 @@ describe('tongyiGenerateImage flow', () => {
           assert.equal(JSON.parse(String(init.body)).model, 'qwen-image-3.0');
           return json(200, { output: { task_id: 't1', task_status: 'PENDING' }, request_id: 'r' });
         }
-        assert.equal((init?.headers as Record<string, string>).Authorization, 'Bearer k');
+        assert.equal((init!.headers as Record<string, string>).Authorization, 'Bearer k');
         const s = statuses.shift();
         return json(200, s ? { output: { task_id: 't1', task_status: s } } : succeeded());
       }) as typeof fetch,

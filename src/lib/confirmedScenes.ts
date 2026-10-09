@@ -16,6 +16,10 @@ export interface ConfirmedScene {
   url: string;
   sentence: string;
   confirmedAt: string;
+  /** A shrunk WebP copy is in IndexedDB under `id` (see sceneImageCache.ts). */
+  localCached?: boolean;
+  /** 临时图: download failed; only the (expiring) remote URL is available. */
+  temporary?: boolean;
 }
 
 export interface TrayView {
@@ -99,11 +103,12 @@ export function acceptScene(
   },
   storage: StorageLike | null = defaultStorage(),
   now: Date = new Date(),
-): { stored: boolean; scenes: ConfirmedScene[] } {
+): { stored: boolean; scenes: ConfirmedScene[]; scene: ConfirmedScene | null } {
   const scenes = loadConfirmedScenes(storage);
   const eligible = input.confirmed && input.kind === 'api' && input.url.trim().length > 0;
-  if (!eligible) return { stored: false, scenes };
-  if (scenes.some((s) => s.url === input.url)) return { stored: true, scenes };
+  if (!eligible) return { stored: false, scenes, scene: null };
+  const existing = scenes.find((s) => s.url === input.url);
+  if (existing) return { stored: true, scenes, scene: existing };
   const next: ConfirmedScene = {
     id: makeId(now),
     url: input.url,
@@ -111,7 +116,8 @@ export function acceptScene(
     confirmedAt: now.toISOString(),
   };
   const saved = persist([...scenes, next], storage);
-  return { stored: saved.some((s) => s.id === next.id), scenes: saved };
+  const stored = saved.some((s) => s.id === next.id);
+  return { stored, scenes: saved, scene: stored ? next : null };
 }
 
 export function trayView(scenes: readonly ConfirmedScene[]): TrayView {

@@ -16,6 +16,9 @@
  *   GET  /api/v1/tasks/{task_id}                              task polling
  *   POST /api/v1/services/aigc/multimodal-generation/generation  sync call
  *   GET  /oss/{task_id}.png                                   result image (stands in for the OSS URL)
+ * OSS control (palace local-copy E2E):
+ *   POST /__control?oss=404|200&ossCors=0|1   make result images 404 (expired) / drop CORS headers
+ *   Result images are a generated 1024×1024 PNG so the ≤512 WebP downscale is observable.
  * Extra DashScope modes: task_failed (task ends FAILED). `hang` keeps the task RUNNING forever.
  *   TASK_POLLS   polls before a task SUCCEEDS (default 2 → PENDING, RUNNING, SUCCEEDED)
  *
@@ -24,6 +27,7 @@
  */
 import http from 'node:http';
 import fs from 'node:fs';
+import zlib from 'node:zlib';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -34,6 +38,51 @@ const HANG_MS = Number(process.env.HANG_MS || 35000);
 const HEADER_LOG = process.env.HEADER_LOG || path.join(__dirname, 'mock-image-api-headers.log');
 const SAMPLE_B64 = fs.readFileSync(path.join(__dirname, 'sample-image.b64'), 'utf8').trim();
 const TASK_POLLS = Number(process.env.TASK_POLLS || 2);
+const oss = { status: 200, cors: process.env.OSS_CORS !== '0' };
+
+/** Tiny PNG encoder: w×h RGB gradient (stands in for a 1024² qwen-image result). */
+function makePng(w, h) {
+  const crcTable = Array.from({ length: 256 }, (_, n) => {
+    let c = n;
+    for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
+    return c >>> 0;
+  });
+  const crc = (buf) => {
+    let c = 0xffffffff;
+    for (const b of buf) c = crcTable[(c ^ b) & 0xff] ^ (c >>> 8);
+    return (c ^ 0xffffffff) >>> 0;
+  };
+  const chunk = (type, data) => {
+    const len = Buffer.alloc(4);
+    len.writeUInt32BE(data.length);
+    const td = Buffer.concat([Buffer.from(type), data]);
+    const c = Buffer.alloc(4);
+    c.writeUInt32BE(crc(td));
+    return Buffer.concat([len, td, c]);
+  };
+  const ihdr = Buffer.alloc(13);
+  ihdr.writeUInt32BE(w, 0);
+  ihdr.writeUInt32BE(h, 4);
+  ihdr[8] = 8; // bit depth
+  ihdr[9] = 2; // RGB
+  const raw = Buffer.alloc((w * 3 + 1) * h);
+  for (let y = 0; y < h; y++) {
+    const row = y * (w * 3 + 1);
+    for (let x = 0; x < w; x++) {
+      const i = row + 1 + x * 3;
+      raw[i] = (x * 255) / w;
+      raw[i + 1] = (y * 255) / h;
+      raw[i + 2] = 200;
+    }
+  }
+  return Buffer.concat([
+    Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]),
+    chunk('IHDR', ihdr),
+    chunk('IDAT', zlib.deflateSync(raw)),
+    chunk('IEND', Buffer.alloc(0)),
+  ]);
+}
+const OSS_PNG = makePng(1024, 1024);
 /** task_id → { mode, polls } */
 const tasks = new Map();
 let taskSeq = 0;
@@ -149,9 +198,25 @@ const server = http.createServer(async (req, res) => {
 
   const base = `http://${req.headers.host}`;
 
+  if (req.method === 'POST' && u.pathname === '/__control') {
+    if (u.searchParams.has('oss')) oss.status = Number(u.searchParams.get('oss'));
+    if (u.searchParams.has('ossCors')) oss.cors = u.searchParams.get('ossCors') !== '0';
+    json(res, 200, { oss });
+    return;
+  }
+
   if (req.method === 'GET' && /^\/oss\/[^/]+\.png$/.test(u.pathname)) {
-    res.writeHead(200, { 'Content-Type': 'image/png' });
-    res.end(Buffer.from(SAMPLE_B64, 'base64'));
+    fs.appendFileSync(HEADER_LOG, JSON.stringify({ ts: new Date().toISOString(), method: 'GET', url: u.pathname, oss: { ...oss }, origin: req.headers.origin || null }) + '\n');
+    if (!oss.cors) {
+      for (const h of ['Access-Control-Allow-Origin', 'Access-Control-Allow-Methods', 'Access-Control-Allow-Headers', 'Access-Control-Max-Age']) res.removeHeader(h);
+    }
+    if (oss.status !== 200) {
+      res.writeHead(oss.status, { 'Content-Type': 'application/xml' });
+      res.end('<Error><Code>AccessDenied</Code><Message>Request has expired.</Message></Error>');
+      return;
+    }
+    res.writeHead(200, { 'Content-Type': 'image/png', 'Cache-Control': 'no-store' });
+    res.end(OSS_PNG);
     return;
   }
 

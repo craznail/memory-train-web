@@ -6,9 +6,11 @@ import {
   TRAY_TITLE,
   type ConfirmedScene,
 } from '../lib/confirmedScenes';
+import { TEMPORARY_LABEL, type DisplayScene } from '../lib/sceneImageCache';
+import { SceneImage } from './SceneImage';
 
 interface Props {
-  scenes: readonly ConfirmedScene[];
+  scenes: readonly (ConfirmedScene | DisplayScene)[];
   selectedId: string | null;
   onSelect: (id: string | null) => void;
   /** When false, skip the outer card so the strip can sit inside an existing card. */
@@ -54,7 +56,16 @@ export function SceneTray({ scenes, selectedId, onSelect, framed = true }: Props
                   e.dataTransfer.effectAllowed = 'copy';
                 }}
               >
-                <img src={scene.url} alt="" draggable={false} />
+                <SceneImage
+                  src={scene.url}
+                  fallbackSrc={'fallbackUrl' in scene ? scene.fallbackUrl : null}
+                  testId="scene-thumb-img"
+                />
+                {'isTemporary' in scene && scene.isTemporary && (
+                  <span className="scene-temp-badge" data-testid="scene-temp-badge">
+                    {TEMPORARY_LABEL}
+                  </span>
+                )}
               </button>
             );
           })}

@@ -10,6 +10,7 @@ import { pickPaperByIndex } from '../data/papers';
 import { getMethod } from '../data/methods';
 import { useListenSession } from '../hooks/useListenSession';
 import { loadConfirmedScenes, placeConfirmedImage } from '../lib/confirmedScenes';
+import { useDisplayScenes } from '../hooks/useDisplayScenes';
 import { gradeAnswers, summarizePractice, isAnswerCorrect } from '../lib/scoring';
 import type { PracticeSummary } from '../types';
 
@@ -33,7 +34,8 @@ export function TeachSession() {
   const [afterSummary, setAfterSummary] = useState<PracticeSummary | null>(null);
   const [feedbackMode, setFeedbackMode] = useState(false);
   const [answeringPass, setAnsweringPass] = useState<'blind' | 'after'>('blind');
-  const [confirmedScenes] = useState(() => loadConfirmedScenes());
+  const [storedScenes] = useState(() => loadConfirmedScenes());
+  const confirmedScenes = useDisplayScenes(storedScenes);
   const [scenePlacements, setScenePlacements] = useState<Record<string, string>>({});
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
   const palacePegs = useMemo(

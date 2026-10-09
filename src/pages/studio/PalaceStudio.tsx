@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { StudioShell } from '../../components/StudioShell';
 import { PegPicture } from '../../components/PegPicture';
 import { SceneTray } from '../../components/SceneTray';
+import { useDisplayScenes } from '../../hooks/useDisplayScenes';
 import {
   DEFAULT_HOME_ROUTE,
   MAX_PER_SITE,
@@ -34,7 +35,11 @@ export function PalaceStudio() {
   const [revealed, setRevealed] = useState(false);
   const [guesses, setGuesses] = useState<Record<string, string[]>>({});
   const [walkScores, setWalkScores] = useState<boolean[]>([]);
-  const [scenes] = useState<ConfirmedScene[]>(() => loadConfirmedScenes());
+  const [storedScenes] = useState<ConfirmedScene[]>(() => loadConfirmedScenes());
+  // Local IndexedDB copies; 临时图 fall back to the sentence illustration if they expire.
+  const scenes = useDisplayScenes(storedScenes);
+  const sceneFallback = (pegId: string) =>
+    scenes.find((sc) => sc.id === imagePlacements[pegId])?.fallbackUrl ?? null;
   const [imagePlacements, setImagePlacements] = useState<Record<string, string>>({});
   const [selectedSceneId, setSelectedSceneId] = useState<string | null>(null);
 
@@ -240,6 +245,7 @@ export function PalaceStudio() {
                       phase="place"
                       revealed={false}
                       imageUrl={imageUrlForPeg(imagePlacements, s.id, scenes)}
+                      fallbackUrl={sceneFallback(s.id)}
                       text=""
                     />
                     <span
@@ -360,6 +366,7 @@ export function PalaceStudio() {
             phase="recall"
             revealed={revealed}
             imageUrl={imageUrlForPeg(imagePlacements, site.id, scenes)}
+            fallbackUrl={sceneFallback(site.id)}
             text={
               truth.length
                 ? truth.map((p) => `${p.label}·${p.text}`).join('、')

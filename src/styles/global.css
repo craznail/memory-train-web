@@ -366,6 +366,7 @@ select.input-field {
 }
 
 .scene-thumb {
+  position: relative;
   padding: 0;
   flex: 0 0 auto;
   overflow: hidden;
@@ -380,6 +381,26 @@ select.input-field {
   border-radius: 12px;
   object-fit: cover;
   display: block;
+  pointer-events: none;
+}
+
+.scene-thumb > span[data-state='loading'] {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+}
+
+.scene-temp-badge {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  padding: 1px 5px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.62);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 14px;
   pointer-events: none;
 }
 
