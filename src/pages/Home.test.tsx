@@ -63,6 +63,14 @@ describe('Home page (visual v2)', () => {
     assert.match(html, /再练一组/);
   });
 
+  it('uses the reference copy (项目总管 review) and none of the old captions', async () => {
+    installStorage();
+    const html = await renderHome();
+    for (const t of ['每一次专注的聆听，都是更强大记忆力的开始。', '测出你的听觉记忆水平', '探索 6 种记忆方法，构建你的记忆力体系', '多样化练习，提升你的听觉记忆能力', '看看你的进步', '个性化你的训练体验', '听一段语音，'])
+      assert.ok(html.includes(t), t);
+    for (const t of ['测一测 · 学方法 · 练听力', '正式评分', '不计正式分', '按优先级逐个学', '10 分钟']) assert.ok(!html.includes(t), t);
+  });
+
   it('shows all 6 methods and 练听力 first in the bottom row', async () => {
     installStorage();
     const html = await renderHome();
