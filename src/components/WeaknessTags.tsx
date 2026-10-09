@@ -30,7 +30,7 @@ export function WeaknessTags({ weakPoints }: Props) {
         .weak-tag {
           padding: 6px 12px;
           border-radius: 999px;
-          background: rgba(239, 68, 68, 0.1);
+          background: var(--color-error-soft);
           color: var(--color-error);
           font-size: var(--font-aux);
           font-weight: 600;

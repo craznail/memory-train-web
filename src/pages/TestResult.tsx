@@ -70,7 +70,7 @@ export function TestResult() {
         {records.map((r) => {
           const q = paper?.questions.find((x) => x.id === r.questionId);
           return (
-            <div key={r.questionId} style={{ borderTop: '1px solid #E2E8F0', paddingTop: 8 }}>
+            <div key={r.questionId} style={{ borderTop: '1px solid rgba(232, 200, 170, 0.6)', paddingTop: 8 }}>
               <div className="muted">
                 [{r.category}] {q?.prompt}
               </div>
