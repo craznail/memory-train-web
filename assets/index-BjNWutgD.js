@@ -267,7 +267,8 @@ Please change the parent <Route path="${e}"> to <Route path="${e===`/`?`*`:`${e}
         }
         .home-hero-btn { margin-top: 10px; }
         @media (max-width: 359px) {
-          .home-hero-bg { object-position: right center; }
+          /* follow-up to #3: shift the art right so 「…数字」 keeps ≥12px from the trunk (measured in layout-check; 55% also keeps the 3/3 tag and button ≥12px clear) */
+          .home-hero-bg { object-position: 55% center; }
           .home-hero-s { font-size: 12px; }
           .home-progress-track { width: 56px; }
         }
