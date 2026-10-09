@@ -123,7 +123,7 @@ export function AssociationStudio() {
                 style={{
                   padding: '6px 10px',
                   borderRadius: 999,
-                  background: 'rgba(59,130,246,0.12)',
+                  background: 'var(--color-primary-soft)',
                   fontWeight: 600,
                 }}
               >

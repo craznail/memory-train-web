@@ -1,4 +1,8 @@
 import type { Question } from '../types';
+import correct1x from '../assets/illustrations/elephant-correct@1x.webp';
+import correct2x from '../assets/illustrations/elephant-correct@2x.webp';
+import wrong1x from '../assets/illustrations/elephant-wrong@1x.webp';
+import wrong2x from '../assets/illustrations/elephant-wrong@2x.webp';
 
 interface Props {
   question: Question;
@@ -64,8 +68,21 @@ export function QuestionCard({
       )}
 
       {showFeedback && (
-        <div className={isCorrect ? 'success-text' : 'error-text'} style={{ fontWeight: 600 }}>
-          {isCorrect ? '回答正确' : `不正确，参考答案：${question.answer}`}
+        <div
+          className={`feedback ${isCorrect ? 'feedback--ok success-text' : 'feedback--bad error-text'}`}
+          role="status"
+        >
+          <img
+            src={isCorrect ? correct1x : wrong1x}
+            srcSet={isCorrect ? `${correct1x} 1x, ${correct2x} 2x` : `${wrong1x} 1x, ${wrong2x} 2x`}
+            width={64}
+            height={64}
+            alt=""
+            aria-hidden="true"
+          />
+          <span className="feedback-text">
+            {isCorrect ? '回答正确' : `不正确，参考答案：${question.answer}`}
+          </span>
         </div>
       )}
 

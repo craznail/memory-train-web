@@ -84,7 +84,7 @@ export function EncodingStudio() {
                 textAlign: 'center',
                 padding: 8,
                 borderRadius: 12,
-                background: 'rgba(59,130,246,0.08)',
+                background: 'var(--color-primary-soft)',
               }}
             >
               <div style={{ fontSize: 22 }}>{e.emoji}</div>

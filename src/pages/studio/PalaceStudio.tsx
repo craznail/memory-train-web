@@ -150,7 +150,8 @@ export function PalaceStudio() {
                   width: 36,
                   height: 36,
                   borderRadius: 99,
-                  background: 'rgba(59,130,246,0.15)',
+                  background: 'var(--color-primary-soft)',
+                  color: 'var(--color-primary-text)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -169,18 +170,18 @@ export function PalaceStudio() {
                   onKeyDown={(e) => {
                     if (e.key === 'Enter') setEditingId(null);
                   }}
+                  className="studio-input"
                   style={{
                     flex: 1,
                     padding: '10px 12px',
                     borderRadius: 12,
-                    border: '1px solid #E2E8F0',
                     fontSize: 16,
                   }}
                 />
               ) : (
                 <button
                   type="button"
-                  className="btn-secondary"
+                  className="btn-secondary editable-item"
                   style={{ flex: 1, textAlign: 'left' }}
                   onClick={() => setEditingId(s.id)}
                 >
@@ -236,7 +237,7 @@ export function PalaceStudio() {
                     border:
                       selectedSceneId || (selectedPoint && !full)
                         ? '2px solid var(--color-primary)'
-                        : '1px solid #E2E8F0',
+                        : '1.5px solid var(--color-border-input)',
                     cursor: selectedSceneId || (selectedPoint && !full) ? 'pointer' : 'default',
                   }}
                 >
@@ -279,7 +280,7 @@ export function PalaceStudio() {
                         style={{
                           padding: '4px 10px',
                           borderRadius: 999,
-                          background: 'rgba(59,130,246,0.12)',
+                          background: 'var(--color-primary-soft)',
                           fontSize: 13,
                           fontWeight: 600,
                         }}
@@ -350,7 +351,7 @@ export function PalaceStudio() {
               height: 64,
               borderRadius: 99,
               margin: '0 auto',
-              background: 'rgba(59,130,246,0.15)',
+              background: 'var(--color-primary-soft)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -461,7 +462,7 @@ export function PalaceStudio() {
             display: 'inline-block',
             padding: '10px 16px',
             borderRadius: 999,
-            background: 'rgba(34,197,94,0.15)',
+            background: 'var(--color-success-soft)',
             color: 'var(--color-success)',
             fontWeight: 800,
           }}

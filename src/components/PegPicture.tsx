@@ -40,7 +40,7 @@ export function PegPicture({ phase, revealed, imageUrl, text, fallbackUrl }: Pro
           width: PLACED_PX,
           height: PLACED_PX,
           borderRadius: THUMB_RADIUS_PX,
-          border: '1.5px dashed #94A3B8',
+          border: '1.5px dashed var(--color-border-input)',
         }}
       >
         ?
@@ -53,6 +53,7 @@ export function PegPicture({ phase, revealed, imageUrl, text, fallbackUrl }: Pro
       <SceneImage
         src={visual.imageUrl}
         fallbackSrc={fallbackUrl}
+        className="peg-fade"
         width={PLACED_PX}
         height={PLACED_PX}
         style={{

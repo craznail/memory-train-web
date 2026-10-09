@@ -96,7 +96,7 @@ describe('confirmed scenes tray', () => {
     );
     assert.match(html, new RegExp(TRAY_TITLE));
     assert.match(html, new RegExp(EMPTY_TRAY_TEXT));
-    assert.match(html, /#94A3B8/);
+    assert.match(html, /var\(--color-text-tertiary\)/); // grey caption, visual v2 token (≥4.5:1)
     assert.match(html, /font-size:13px/);
     assert.doesNotMatch(html, /<img/i);
   });

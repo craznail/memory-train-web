@@ -27,7 +27,7 @@ interface Props {
 const slipStyle = {
   padding: '4px 10px',
   borderRadius: 999,
-  background: 'rgba(59,130,246,0.12)',
+  background: 'var(--color-primary-soft)',
   fontSize: 13,
   fontWeight: 600,
 } as const;

@@ -4,12 +4,15 @@ import type { ReactNode } from 'react';
 interface Props {
   title?: string;
   showBack?: boolean;
+  /** Hide the default back link + title (page renders its own header, e.g. StudioShell) */
+  bare?: boolean;
   children: ReactNode;
 }
 
-export function Layout({ title, showBack = true, children }: Props) {
+export function Layout({ title, showBack = true, bare = false, children }: Props) {
   return (
     <div className="app-shell">
+      {!bare && (
       <header className="app-header">
         {showBack ? (
           <Link to="/" className="back-link">
@@ -23,6 +26,7 @@ export function Layout({ title, showBack = true, children }: Props) {
         )}
         {title && <h1 className="page-title">{title}</h1>}
       </header>
+      )}
       <main className="stack" style={{ flex: 1 }}>
         {children}
       </main>
