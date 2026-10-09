@@ -4,6 +4,9 @@
  *  - studio cards (v3): art ≈50% card width (≈42% at 320), full card height, anchored right/bottom,
  *    left-edge fade; text only over the faded edge (never the opaque art); descriptions ≤2 lines (≤3 at 320);
  *    same-row cards equal height; WCAG AA contrast measured on the real pixels behind the text
+ *  - hero (follow-up to #3): gap between the hero text boxes and the elephant (trunk/face), using the
+ *    subject mask from scripts/hero-subject-mask.json mapped through object-fit: cover + object-position;
+ *    measured for all three progress states; subtitle gap must be ≥12px at 320
  *  - method descriptions: single line, inside their column, all 6 visible
  *  - no single-line text clipped (subtitle, captions); no page horizontal scroll
  * Usage: node scripts/visual-layout-check.mjs <out.json>   (needs `npm run build`)
@@ -23,6 +26,52 @@ const server = http.createServer((req, res) => {
   res.setHeader('content-type', { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.webp': 'image/webp', '.svg': 'image/svg+xml' }[path.extname(f)] || '');
   fs.createReadStream(f).pipe(res);
 });
+const HERO_MASK = JSON.parse(fs.readFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)), 'hero-subject-mask.json'), 'utf8'));
+const DAY = '2026-10-09';
+const SCORE = { overall: 72, auditory: 75, antiInterference: 68, weakPoints: [], date: '2026-10-08T12:00:00.000Z', paperId: 'p1' };
+const HIST = { 'memory-train-score-history': JSON.stringify({ latest: SCORE, history: [SCORE] }) };
+const plan = (n) => ({ ...HIST, [`memory-train-daily-${DAY}`]: JSON.stringify({ date: DAY, currentIndex: n, completed: n === 3,
+  rounds: [0, 1, 2].map((i) => ({ paperId: 'abc'[i], withInterference: i === 0, done: i < n })) }) });
+const HERO_STATES = [['0/3 开始', HIST], ['2/3 继续', plan(2)], ['3/3 今日已完成', plan(3)]];
+
+async function heroGaps(browser, width) {
+  const out = [];
+  for (const [state, seed] of HERO_STATES) {
+    const ctx = await browser.newContext({ viewport: { width, height: 812 }, deviceScaleFactor: 2, locale: 'zh-CN', timezoneId: 'Asia/Shanghai' });
+    const page = await ctx.newPage();
+    await page.clock.setFixedTime(new Date('2026-10-09T15:00:00+08:00'));
+    await page.addInitScript((sd) => { localStorage.clear(); for (const [k, v] of Object.entries(sd)) localStorage.setItem(k, v); }, seed);
+    await page.goto(`http://127.0.0.1:${server.address().port}/#/`, { waitUntil: 'networkidle' });
+    await page.waitForTimeout(400);
+    const g = await page.evaluate((mask) => {
+      const img = document.querySelector('.home-hero-bg'); const ir = img.getBoundingClientRect();
+      const cs = getComputedStyle(img); const [px, py] = cs.objectPosition.split(' ').map((v) => parseFloat(v) / 100);
+      const s = Math.max(ir.width / mask.width, ir.height / mask.height);
+      const ox = ir.left + (ir.width - mask.width * s) * px, oy = ir.top + (ir.height - mask.height * s) * py;
+      const subjectLeftAt = (top, bottom) => { let m = Infinity;
+        for (let y = Math.max(0, Math.floor((top - oy) / s)); y <= Math.min(mask.height - 1, Math.ceil((bottom - oy) / s)); y++) { const lx = mask.leftmostX[y]; if (lx != null) m = Math.min(m, ox + lx * s); }
+        return m; };
+      // nearest elephant pixel in any direction (Euclidean) from the text box, plus the same-row horizontal gap
+      const nearest = (r) => { let d = Infinity;
+        mask.leftmostX.forEach((lx, y) => { if (lx == null) return; const ex = ox + lx * s, ey = oy + y * s;
+          const dx = Math.max(0, ex - r.right, r.left - ex), dy = Math.max(0, r.top - ey, ey - r.bottom); d = Math.min(d, Math.hypot(dx, dy)); });
+        return d; };
+      const boxes = { title: document.querySelector('.home-hero-t'), subtitle: document.querySelector('.home-hero-s'), progress: document.querySelector('.home-progress'), button: document.querySelector('.home-hero-btn') };
+      const res = { objectPosition: cs.objectPosition, subtitleFontPx: parseFloat(getComputedStyle(boxes.subtitle).fontSize), progressText: document.querySelector('.home-progress')?.textContent };
+      for (const [k, el] of Object.entries(boxes)) {
+        if (!el) continue;
+        const rg = document.createRange(); rg.selectNodeContents(el); const rects = [...rg.getClientRects()];
+        const r = rects.length ? { left: Math.min(...rects.map((x) => x.left)), right: Math.max(...rects.map((x) => x.right)), top: Math.min(...rects.map((x) => x.top)), bottom: Math.max(...rects.map((x) => x.bottom)) } : el.getBoundingClientRect();
+        const box = k === 'progress' || k === 'button' ? el.getBoundingClientRect() : r;
+        res[k] = { textRight: Math.round((box.right - ir.left) * 10) / 10, rowGap: Math.round((subjectLeftAt(box.top, box.bottom) - box.right) * 10) / 10, nearestGap: Math.round(nearest(box) * 10) / 10 };
+      }
+      return res;
+    }, HERO_MASK);
+    out.push({ state, ...g });
+    await ctx.close();
+  }
+  return out;
+}
 await new Promise((r) => server.listen(0, '127.0.0.1', r));
 const browser = await chromium.launch();
 const report = [];
@@ -107,16 +156,18 @@ for (const width of [375, 320]) {
     }, { noText, noTextNoArt, rects: c.rects, colors: c.colors }));
     delete c.rects; delete c.colors;
   }
+  r.heroGaps = await heroGaps(browser, width);
+  r.heroSubtitleMinGap = Math.min(...r.heroGaps.map((h) => h.subtitle.nearestGap));
   const rows = {}; r.cards.forEach((c) => (rows[c.top] ||= []).push(c.cardH));
   r.sameRowEqual = Object.values(rows).every((hs) => Math.max(...hs) - Math.min(...hs) < 0.5);
   r.minTextContrast = Math.min(...r.cards.map((c) => c.minContrast));
   const artTarget = width < 360 ? [38, 50] : [46, 54];
-  const ok = r.sameRowEqual && r.cards.every((c) => !c.textOnOpaqueArt && c.artFullHeight && c.artAnchored && c.artPct >= artTarget[0] && c.artPct <= artTarget[1]
+  const ok = (width >= 360 || r.heroSubtitleMinGap >= 12) && r.sameRowEqual && r.cards.every((c) => !c.textOnOpaqueArt && c.artFullHeight && c.artAnchored && c.artPct >= artTarget[0] && c.artPct <= artTarget[1]
       && c.descLines <= (width < 360 ? 3 : 2) && c.minContrast >= 4.5 && c.maxArtDeltaBehindText <= 90)
     && (width < 360 || JSON.stringify(r.cards.find((c) => c.title === '联想').lines) === JSON.stringify(['把新信息与熟悉的', '事物联系起来'])) && r.methods.every((m) => m.oneLine && m.noCollision && m.inStrip && m.notClipped && m.visible && m.fontSize >= 10) && r.heroTextRight <= 16 + 190 + 0.5 && !r.stripScrolls && !r.pageHScroll;
   if (!ok) failed++;
   report.push({ width, ok, ...r });
-  console.log(`${ok ? 'PASS' : 'FAIL'} ${width}px`, JSON.stringify({ heroTextRight: r.heroTextRight, heroHeight: r.heroHeight, cards: r.cards, sameRowEqual: r.sameRowEqual, minTextContrast: r.minTextContrast, methods: r.methods.map((m) => [m.name, m.desc, m.oneLine && m.noCollision && m.inStrip && m.notClipped]), clipped: r.clipped }));
+  console.log(`${ok ? 'PASS' : 'FAIL'} ${width}px`, JSON.stringify({ heroTextRight: r.heroTextRight, heroHeight: r.heroHeight, heroSubtitleMinGap: r.heroSubtitleMinGap, heroGaps: r.heroGaps, cards: r.cards, sameRowEqual: r.sameRowEqual, minTextContrast: r.minTextContrast, methods: r.methods.map((m) => [m.name, m.desc, m.oneLine && m.noCollision && m.inStrip && m.notClipped]), clipped: r.clipped }));
   await page.close();
 }
 fs.writeFileSync(OUT, JSON.stringify(report, null, 2));
