@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" role="img" aria-label="信息分组">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="28%" r="80%">
+      <stop offset="0" stop-color="#FFB070"/><stop offset="1" stop-color="#F27A2C"/>
+    </radialGradient>
+    <linearGradient id="hl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <circle cx="28" cy="28" r="27" fill="#FDE3CC"/>
+  <circle cx="28" cy="28" r="22" fill="url(#g)"/>
+  <ellipse cx="28" cy="16" rx="14" ry="7" fill="url(#hl)"/>
+  <g fill="#fff" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="18" width="9" height="9" rx="2.2" stroke="none"/><rect x="29" y="18" width="9" height="9" rx="2.2" stroke="none"/><rect x="18" y="29" width="9" height="9" rx="2.2" stroke="none"/><rect x="29" y="29" width="9" height="9" rx="2.2" stroke="none"/></g>
+</svg>

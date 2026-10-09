@@ -173,7 +173,7 @@ export function DailyTraining() {
             marginTop: 10,
             height: 8,
             borderRadius: 999,
-            background: 'rgba(59,130,246,0.15)',
+            background: 'var(--color-track)',
             overflow: 'hidden',
           }}
         >

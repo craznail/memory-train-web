@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 56 56" role="img" aria-label="记忆宫殿">
+  <defs>
+    <radialGradient id="g" cx="35%" cy="28%" r="80%">
+      <stop offset="0" stop-color="#9CCBFF"/><stop offset="1" stop-color="#4A88F2"/>
+    </radialGradient>
+    <linearGradient id="hl" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <circle cx="28" cy="28" r="27" fill="#DCEBFF"/>
+  <circle cx="28" cy="28" r="22" fill="url(#g)"/>
+  <ellipse cx="28" cy="16" rx="14" ry="7" fill="url(#hl)"/>
+  <g fill="#fff" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M16 23l12-7 12 7z" stroke-width="1.6"/><rect x="16.5" y="36" width="23" height="3" rx="1" stroke="none"/><rect x="19" y="25" width="3.4" height="10" rx="1" stroke="none"/><rect x="26.3" y="25" width="3.4" height="10" rx="1" stroke="none"/><rect x="33.6" y="25" width="3.4" height="10" rx="1" stroke="none"/></g>
+</svg>

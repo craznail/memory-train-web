@@ -29,7 +29,7 @@ export function CoachReviewCard({ tips, onContinue, onSkip }: Props) {
                 gap: 10,
                 padding: '10px 12px',
                 borderRadius: 12,
-                background: 'rgba(59,130,246,0.06)',
+                background: 'var(--color-primary-soft)',
                 cursor: 'pointer',
               }}
             >

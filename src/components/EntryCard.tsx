@@ -4,70 +4,54 @@ interface Props {
   to: string;
   title: string;
   subtitle: string;
-  emoji: string;
-  /** Stronger primary CTA styling */
-  primary?: boolean;
+  /** Decorative icon (SVG via <img>, SPEC §4) */
+  icon: string;
 }
 
-export function EntryCard({ to, title, subtitle, emoji, primary = false }: Props) {
+/** Home bottom entry (练听力 / 能力报告 / 设置) — visual v2. */
+export function EntryCard({ to, title, subtitle, icon }: Props) {
   return (
-    <Link
-      to={to}
-      className={`card entry-card${primary ? ' entry-card--primary' : ''}`}
-    >
-      <div className={`entry-emoji${primary ? ' entry-emoji--primary' : ''}`}>
-        {emoji}
-      </div>
-      <div className="entry-body">
-        <div className="entry-title">{title}</div>
-        <div className={primary ? 'entry-sub-primary' : 'muted'}>{subtitle}</div>
-      </div>
-      <div className={`entry-arrow${primary ? ' entry-arrow--primary' : ''}`}>›</div>
+    <Link to={to} className="card entry-card press">
+      <img src={icon} alt="" aria-hidden="true" width={30} height={30} className="entry-icon" />
+      <span className="entry-body">
+        <span className="entry-title">{title}</span>
+        <span className="entry-sub">{subtitle}</span>
+      </span>
       <style>{`
         .entry-card {
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 14px 16px;
-          transition: transform 0.12s ease, box-shadow 0.15s ease;
+          gap: 5px;
+          height: 56px;
+          min-height: 44px;
+          padding: 0 5px;
+          min-width: 0;
         }
-        .entry-card:active { transform: scale(0.98); }
-        .entry-card--primary {
-          background: var(--color-primary);
-          color: #fff;
-          box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
-        }
-        .entry-emoji {
-          width: 44px;
-          height: 44px;
-          border-radius: 12px;
-          background: rgba(59, 130, 246, 0.1);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 22px;
-          flex-shrink: 0;
-        }
-        .entry-emoji--primary {
-          background: rgba(255, 255, 255, 0.2);
-        }
-        .entry-body { flex: 1; min-width: 0; }
+        .entry-icon { flex-shrink: 0; width: 26px; height: 26px; }
+        .entry-body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
         .entry-title {
-          font-size: var(--font-body);
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          font-size: 13.5px;
           font-weight: 700;
-          margin-bottom: 2px;
+          line-height: 1.2;
+          white-space: nowrap;
         }
-        .entry-sub-primary {
-          font-size: var(--font-aux);
-          color: rgba(255, 255, 255, 0.85);
-        }
-        .entry-arrow {
-          font-size: 24px;
+        /* all three subtitles: 11px, single line, ellipsis → equal card heights */
+        .entry-sub {
+          display: block;
+          font-size: 11px;
+          line-height: 1.35;
           color: var(--color-text-secondary);
-          line-height: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
-        .entry-arrow--primary {
-          color: rgba(255, 255, 255, 0.9);
+        @media (max-width: 359px) {
+          .entry-card { gap: 4px; padding: 0 5px; }
+          .entry-icon { width: 24px; height: 24px; }
+          .entry-title { font-size: 13px; }
         }
       `}</style>
     </Link>
