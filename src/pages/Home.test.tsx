@@ -78,4 +78,23 @@ describe('Home page (visual v2)', () => {
     const bottom = html.slice(html.indexOf('aria-label="更多"'));
     assert.ok(bottom.indexOf('练听力') < bottom.indexOf('能力报告') && bottom.indexOf('能力报告') < bottom.indexOf('设置'));
   });
+
+  it('练习台 cards use the reference two-line descriptions (one span per line) and keep the illustration', async () => {
+    installStorage();
+    const html = (await renderHome()).replace(/\u200B/g, '');
+    const expected: Record<string, [string, string]> = {
+      成像: ['在脑中构建画面', '让信息更深刻'],
+      编码: ['把数字、文字', '变成有意义的代码'],
+      联想: ['把新信息与熟悉的', '事物联系起来'],
+      宫殿: ['在熟悉的空间中', '建立记忆线索'],
+    };
+    const cards = html.split('studio-card studio-card--home').slice(1);
+    assert.equal(cards.length, 4);
+    for (const card of cards) {
+      const title = card.match(/studio-card-title serif">([^<]+)</)![1];
+      const lines = [...card.matchAll(/<span>([^<]+)<\/span>/g)].map((m) => m[1]);
+      assert.deepEqual(lines, expected[title], title);
+      assert.ok(card.includes('studio-card-art-img'), `${title} illustration`);
+    }
+  });
 });
