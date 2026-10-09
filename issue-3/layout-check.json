@@ -7,27 +7,164 @@
     "cards": [
       {
         "title": "成像",
-        "textPct": 53.8,
-        "overlap": false,
-        "artInside": true
+        "lines": [
+          "在脑中构建画面",
+          "让信息更深刻"
+        ],
+        "descLines": 2,
+        "cardW": 168.5,
+        "cardH": 104,
+        "top": 569,
+        "artW": 83.3,
+        "artH": 102,
+        "artPct": 49.4,
+        "artFullHeight": true,
+        "artAnchored": true,
+        "textPct": 52.2,
+        "opaqueArtPct": 66.8,
+        "textOnOpaqueArt": false,
+        "minContrast": 5.49,
+        "maxArtDeltaBehindText": 26,
+        "perLine": [
+          {
+            "minContrast": 15.93,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 5.49,
+            "artDelta": 26,
+            "at": [
+              87.7396449704142,
+              53.84023668639053
+            ]
+          },
+          {
+            "minContrast": 6.61,
+            "artDelta": 0,
+            "at": null
+          }
+        ]
       },
       {
         "title": "编码",
-        "textPct": 47.4,
-        "overlap": false,
-        "artInside": true
+        "lines": [
+          "把数字、文字",
+          "变成有意义的代码"
+        ],
+        "descLines": 2,
+        "cardW": 168.5,
+        "cardH": 104,
+        "top": 569,
+        "artW": 83.3,
+        "artH": 102,
+        "artPct": 49.4,
+        "artFullHeight": true,
+        "artAnchored": true,
+        "textPct": 58.5,
+        "opaqueArtPct": 66.8,
+        "textOnOpaqueArt": false,
+        "minContrast": 5.4,
+        "maxArtDeltaBehindText": 79,
+        "perLine": [
+          {
+            "minContrast": 15.84,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 6.57,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 5.4,
+            "artDelta": 79,
+            "at": [
+              98.2085798816568,
+              71.28846153846153
+            ]
+          }
+        ]
       },
       {
         "title": "联想",
-        "textPct": 47.4,
-        "overlap": false,
-        "artInside": true
+        "lines": [
+          "把新信息与熟悉的",
+          "事物联系起来"
+        ],
+        "descLines": 2,
+        "cardW": 168.5,
+        "cardH": 104,
+        "top": 683,
+        "artW": 83.3,
+        "artH": 102,
+        "artPct": 49.4,
+        "artFullHeight": true,
+        "artAnchored": true,
+        "textPct": 58.5,
+        "opaqueArtPct": 66.8,
+        "textOnOpaqueArt": false,
+        "minContrast": 6.61,
+        "maxArtDeltaBehindText": 0,
+        "perLine": [
+          {
+            "minContrast": 15.92,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 6.66,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 6.61,
+            "artDelta": 0,
+            "at": null
+          }
+        ]
       },
       {
         "title": "宫殿",
-        "textPct": 53.8,
-        "overlap": false,
-        "artInside": true
+        "lines": [
+          "在熟悉的空间中",
+          "建立记忆线索"
+        ],
+        "descLines": 2,
+        "cardW": 168.5,
+        "cardH": 104,
+        "top": 683,
+        "artW": 83.3,
+        "artH": 102,
+        "artPct": 49.4,
+        "artFullHeight": true,
+        "artAnchored": true,
+        "textPct": 52.2,
+        "opaqueArtPct": 66.8,
+        "textOnOpaqueArt": false,
+        "minContrast": 5.67,
+        "maxArtDeltaBehindText": 24,
+        "perLine": [
+          {
+            "minContrast": 15.9,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 5.67,
+            "artDelta": 24,
+            "at": [
+              87.7396449704142,
+              54.837278106508876
+            ]
+          },
+          {
+            "minContrast": 6.59,
+            "artDelta": 0,
+            "at": null
+          }
+        ]
       }
     ],
     "methods": [
@@ -94,7 +231,9 @@
     ],
     "stripScrolls": false,
     "clipped": [],
-    "pageHScroll": false
+    "pageHScroll": false,
+    "sameRowEqual": true,
+    "minTextContrast": 5.4
   },
   {
     "width": 320,
@@ -104,27 +243,171 @@
     "cards": [
       {
         "title": "成像",
-        "textPct": 41.3,
-        "overlap": false,
-        "artInside": true
+        "lines": [
+          "在脑中构建画面",
+          "让信息更深刻"
+        ],
+        "descLines": 2,
+        "cardW": 141,
+        "cardH": 120,
+        "top": 553,
+        "artW": 58.4,
+        "artH": 118,
+        "artPct": 41.4,
+        "artFullHeight": true,
+        "artAnchored": true,
+        "textPct": 62.3,
+        "opaqueArtPct": 72,
+        "textOnOpaqueArt": false,
+        "minContrast": 5.57,
+        "maxArtDeltaBehindText": 25,
+        "perLine": [
+          {
+            "minContrast": 16.04,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 5.57,
+            "artDelta": 25,
+            "at": [
+              87.5,
+              52
+            ]
+          },
+          {
+            "minContrast": 6.66,
+            "artDelta": 0,
+            "at": null
+          }
+        ]
       },
       {
         "title": "编码",
-        "textPct": 41.3,
-        "overlap": false,
-        "artInside": true
+        "lines": [
+          "把数字、文字",
+          "变成有意义的代码"
+        ],
+        "descLines": 3,
+        "cardW": 141,
+        "cardH": 120,
+        "top": 553,
+        "artW": 58.4,
+        "artH": 118,
+        "artPct": 41.4,
+        "artFullHeight": true,
+        "artAnchored": true,
+        "textPct": 54.8,
+        "opaqueArtPct": 72,
+        "textOnOpaqueArt": false,
+        "minContrast": 6.49,
+        "maxArtDeltaBehindText": 0,
+        "perLine": [
+          {
+            "minContrast": 15.94,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 6.63,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 6.57,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 6.49,
+            "artDelta": 0,
+            "at": null
+          }
+        ]
       },
       {
         "title": "联想",
-        "textPct": 41.3,
-        "overlap": false,
-        "artInside": true
+        "lines": [
+          "把新信息与熟悉的",
+          "事物联系起来"
+        ],
+        "descLines": 3,
+        "cardW": 141,
+        "cardH": 120,
+        "top": 683,
+        "artW": 58.4,
+        "artH": 118,
+        "artPct": 41.4,
+        "artFullHeight": true,
+        "artAnchored": true,
+        "textPct": 54.8,
+        "opaqueArtPct": 72,
+        "textOnOpaqueArt": false,
+        "minContrast": 6.6,
+        "maxArtDeltaBehindText": 0,
+        "perLine": [
+          {
+            "minContrast": 16.03,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 6.7,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 6.65,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 6.6,
+            "artDelta": 0,
+            "at": null
+          }
+        ]
       },
       {
         "title": "宫殿",
-        "textPct": 48.9,
-        "overlap": false,
-        "artInside": true
+        "lines": [
+          "在熟悉的空间中",
+          "建立记忆线索"
+        ],
+        "descLines": 2,
+        "cardW": 141,
+        "cardH": 120,
+        "top": 683,
+        "artW": 58.4,
+        "artH": 118,
+        "artPct": 41.4,
+        "artFullHeight": true,
+        "artAnchored": true,
+        "textPct": 62.3,
+        "opaqueArtPct": 72,
+        "textOnOpaqueArt": false,
+        "minContrast": 5.55,
+        "maxArtDeltaBehindText": 50,
+        "perLine": [
+          {
+            "minContrast": 16.04,
+            "artDelta": 0,
+            "at": null
+          },
+          {
+            "minContrast": 5.55,
+            "artDelta": 50,
+            "at": [
+              87.5,
+              49.5
+            ]
+          },
+          {
+            "minContrast": 6.64,
+            "artDelta": 0,
+            "at": null
+          }
+        ]
       }
     ],
     "methods": [
@@ -194,6 +477,8 @@
       "看看你的进步",
       "个性化你的训练体验"
     ],
-    "pageHScroll": false
+    "pageHScroll": false,
+    "sameRowEqual": true,
+    "minTextContrast": 5.55
   }
 ]
