@@ -145,8 +145,17 @@ export function StudioCard({ studio, to, title, lines, size = 'home' }: Props) {
           max-width: none;
         }
         @media (max-width: 359px) {
-          .studio-card--home .studio-card-art { width: 42%; }
-          .studio-card-art-img { max-height: 92px; }
+          /* 320 (UI): whole illustration visible — contain, right/bottom, no bleed; fade only over the
+             transparent watercolor edge (left 15%). The art gets smaller rather than cropped. */
+          .studio-card--home .studio-card-art {
+            width: 42%;
+            -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 15%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 15%);
+          }
+          .studio-card--home .studio-card-art-img {
+            inset: 0; right: 0; width: 100%; height: 100%; max-height: none;
+            object-fit: contain; object-position: right bottom;
+          }
           /* 7 characters per line max → wraps only at the ZWSP phrase breaks, ≤3 lines */
           .studio-card--home .studio-card-sub { max-width: 76px; }
           .studio-card--home .studio-card-sub > span { white-space: normal; word-break: keep-all; }
