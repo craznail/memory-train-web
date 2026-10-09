@@ -42,7 +42,7 @@ export function MethodHintPanel({
           align-items: center;
           padding: 8px 12px;
           border-radius: 999px;
-          background: rgba(59, 130, 246, 0.1);
+          background: var(--color-primary-soft);
           color: var(--color-primary);
           font-size: var(--font-body);
           font-weight: 700;

@@ -28,8 +28,8 @@ export function HistoryChart({ history }: Props) {
     <div className="card">
       <div style={{ fontWeight: 700, marginBottom: 8 }}>综合分趋势</div>
       <svg viewBox={`0 0 ${w} ${h}`} width="100%" style={{ display: 'block' }}>
-        <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="#E2E8F0" />
-        <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke="#E2E8F0" />
+        <line x1={pad} y1={h - pad} x2={w - pad} y2={h - pad} stroke="var(--color-track)" />
+        <line x1={pad} y1={pad} x2={pad} y2={h - pad} stroke="var(--color-track)" />
         <polyline
           fill="none"
           stroke="var(--color-primary)"

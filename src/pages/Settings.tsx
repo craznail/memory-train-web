@@ -100,7 +100,7 @@ export function Settings() {
             fontWeight: 700,
             padding: '4px 10px',
             borderRadius: 999,
-            background: configured ? 'rgba(34,197,94,0.14)' : '#F1F5F9',
+            background: configured ? 'var(--color-success-soft)' : '#F7EEE4',
             color: configured ? 'var(--color-success)' : 'var(--color-text-secondary)',
           }}
         >

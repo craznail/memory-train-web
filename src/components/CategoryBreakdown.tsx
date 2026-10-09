@@ -31,7 +31,7 @@ export function CategoryBreakdown({
               style={{
                 height: 8,
                 borderRadius: 999,
-                background: 'rgba(59,130,246,0.12)',
+                background: 'var(--color-primary-soft)',
                 overflow: 'hidden',
               }}
             >
@@ -55,7 +55,7 @@ export function CategoryBreakdown({
         className="row"
         style={{
           justifyContent: 'space-between',
-          borderTop: '1px solid #E2E8F0',
+          borderTop: '1px solid rgba(232, 200, 170, 0.6)',
           paddingTop: 10,
         }}
       >

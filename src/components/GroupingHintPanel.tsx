@@ -43,7 +43,7 @@ export function GroupingHintPanel({ chunks, visible, mode = 'full' }: Props) {
           flex-direction: column;
           gap: 2px;
           padding: 10px 12px;
-          background: rgba(59, 130, 246, 0.06);
+          background: #FFF4E6;
           border-radius: var(--radius-md);
         }
         .chunk-label {
@@ -62,7 +62,7 @@ export function GroupingHintPanel({ chunks, visible, mode = 'full' }: Props) {
           align-items: center;
           padding: 8px 12px;
           border-radius: 999px;
-          background: rgba(59, 130, 246, 0.1);
+          background: var(--color-primary-soft);
           color: var(--color-primary);
           font-size: var(--font-body);
           font-weight: 700;

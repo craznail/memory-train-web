@@ -13,8 +13,8 @@ export function CoachBar({ tip, enabled, onToggle, visible }: Props) {
       style={{
         position: 'relative',
         padding: '10px 14px',
-        background: 'rgba(59,130,246,0.12)',
-        border: '1px solid rgba(59,130,246,0.2)',
+        background: 'var(--color-primary-soft)',
+        border: '1px solid var(--color-track)',
       }}
     >
       <button
@@ -27,8 +27,8 @@ export function CoachBar({ tip, enabled, onToggle, visible }: Props) {
           fontSize: 12,
           fontWeight: 700,
           border: 'none',
-          background: enabled ? 'var(--color-primary)' : '#CBD5E1',
-          color: '#fff',
+          background: enabled ? 'var(--color-primary)' : 'var(--color-track)',
+          color: enabled ? '#fff' : 'var(--color-text-secondary)',
           borderRadius: 999,
           padding: '4px 10px',
           cursor: 'pointer',
