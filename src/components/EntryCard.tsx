@@ -21,13 +21,13 @@ export function EntryCard({ to, title, subtitle, icon }: Props) {
         .entry-card {
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 5px;
           height: 56px;
           min-height: 44px;
-          padding: 0 7px;
+          padding: 0 5px;
           min-width: 0;
         }
-        .entry-icon { flex-shrink: 0; }
+        .entry-icon { flex-shrink: 0; width: 26px; height: 26px; }
         .entry-body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
         .entry-title {
           display: block;

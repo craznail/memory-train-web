@@ -30,7 +30,7 @@ interface Props {
 /** 2×2 illustrated studio card (home 练习台, reused on /methods in #4). */
 export function StudioCard({ studio, to, title, lines, size = 'home' }: Props) {
   const art = STUDIO_ART[studio];
-  const [w, h] = size === 'methods' ? [116, 96] : [96, 80];
+  const [w, h] = size === 'methods' ? [116, 96] : [64, 54];
   return (
     <Link
       to={to}
@@ -94,9 +94,23 @@ export function StudioCard({ studio, to, title, lines, size = 'home' }: Props) {
         }
         .studio-card-sub > span { white-space: nowrap; }
         .studio-card-chev { position: absolute; left: 14px; bottom: 10px; }
+        /* home: illustration ≤80×68 bottom-right; text column ≤ card − illustration − gap and ≤55% of card → no overlap.
+           (% here is of the content box = card − 14px left padding) */
+        .studio-card--home { height: auto; min-height: 104px; padding: 11px 0 32px 14px; }
+        .studio-card--home .studio-card-title { font-size: var(--font-card-title); }
+        .studio-card--home .studio-card-title,
+        .studio-card--home .studio-card-sub { max-width: min(calc(55% - 6.3px), calc(100% - 76px)); }
+        .studio-card--home .studio-card-sub { text-shadow: none; font-size: 11px; letter-spacing: -0.2px; }
+        .studio-card--home .studio-card-sub > span { white-space: normal; word-break: keep-all; overflow-wrap: anywhere; }
+        .studio-card--home .studio-card-art { right: 4px; bottom: 6px; width: 64px; height: 54px; }
         @media (max-width: 359px) {
-          .studio-card-art { width: 80px; height: 66px; }
-          .studio-card-sub { font-size: 11px; }
+          .studio-card--home .studio-card-title,
+          .studio-card--home .studio-card-sub { max-width: min(calc(55% - 6.3px), calc(100% - 62px)); }
+          .studio-card--home .studio-card-art { width: 52px; height: 44px; }
+        }
+        @media (max-width: 359px) {
+          .studio-card--methods .studio-card-art { width: 80px; height: 66px; }
+          .studio-card--methods .studio-card-sub { font-size: 11px; }
         }
       `}</style>
     </Link>
