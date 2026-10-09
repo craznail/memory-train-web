@@ -24,7 +24,7 @@ export function SceneImage({ src, fallbackSrc, className, width, height, style, 
         data-testid={testId}
         data-state="loading"
         aria-hidden
-        style={{ display: 'inline-block', width, height, background: '#F1F5F9', ...style }}
+        style={{ display: 'inline-block', width, height, background: '#F3E6D8', ...style }}
       />
     );
   }

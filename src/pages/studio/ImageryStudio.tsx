@@ -72,7 +72,7 @@ export function ImageryStudio() {
               display: 'inline-block',
               padding: '10px 16px',
               borderRadius: 999,
-              background: 'rgba(34,197,94,0.15)',
+              background: 'var(--color-success-soft)',
               color: 'var(--color-success)',
               fontWeight: 800,
             }}
@@ -131,10 +131,10 @@ export function ImageryStudio() {
           }}
           placeholder="或自己写：越具体、越夸张、越有动作越好"
           rows={3}
+          className="studio-input"
           style={{
             width: '100%',
             borderRadius: 12,
-            border: '1px solid #E2E8F0',
             padding: 12,
             fontSize: 16,
             fontFamily: 'inherit',

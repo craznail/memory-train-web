@@ -25,7 +25,7 @@ export function SceneTray({ scenes, selectedId, onSelect, framed = true }: Props
         <p
           className="scene-tray-empty"
           data-testid="tray-empty"
-          style={{ margin: 0, color: '#94A3B8', fontSize: 13 }}
+          style={{ margin: 0, color: 'var(--color-text-tertiary)', fontSize: 13 }}
         >
           {EMPTY_TRAY_TEXT}
         </p>

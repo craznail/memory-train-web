@@ -482,6 +482,75 @@ select.input-field {
 }
 
 
+/* ---- Visual v2 studio inputs (#5): editable items 1.5px border-input (3.44:1), focus = primary ---- */
+.studio-input {
+  border: 1.5px solid var(--color-border-input);
+  background: #FFFDF9;
+  color: var(--color-text);
+  outline: none;
+}
+
+.studio-input:focus,
+.studio-input:focus-visible {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(194, 74, 20, 0.18);
+}
+
+.btn-secondary.editable-item {
+  border-color: var(--color-border-input);
+  color: var(--color-text);
+  background: #FFFDF9;
+}
+
+.btn-secondary.editable-item:focus-visible {
+  border-color: var(--color-primary);
+  outline: none;
+}
+
+/* ---- Visual v2 answer feedback bar (#5) ---- */
+.feedback {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 72px;
+  padding: 4px 14px 4px 6px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  animation: enter-fade var(--dur-fade) var(--ease-out) backwards;
+}
+
+.feedback img {
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+.feedback-text {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.feedback--ok {
+  color: var(--color-success);
+  background: var(--color-success-soft);
+}
+
+.feedback--bad {
+  color: var(--color-error);
+  background: var(--color-error-soft);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .feedback {
+    animation-name: feedback-rise;
+  }
+}
+
+@keyframes feedback-rise {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+
 /* ---- Visual v2 motion (SPEC §5): movement only when the user allows it ---- */
 .enter {
   animation: enter-fade var(--dur-enter) var(--ease-out) backwards;
@@ -536,5 +605,10 @@ img.fade-in {
   }
   .enter {
     animation: enter-fade 150ms linear backwards !important;
+  }
+  /* palace reveal + feedback: opacity only, ≤150ms */
+  .peg-fade,
+  .feedback {
+    animation: peg-fade-in 150ms linear !important;
   }
 }
