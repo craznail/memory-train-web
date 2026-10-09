@@ -1,0 +1,10 @@
+{
+  "normalFeedback": [
+    "wrong",
+    "correct"
+  ],
+  "reducedFeedback": {
+    "anim": "peg-fade-in",
+    "dur": "0.15s"
+  }
+}
