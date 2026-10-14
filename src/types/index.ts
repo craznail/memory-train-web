@@ -1,3 +1,5 @@
+import type { MethodId } from '../data/methods';
+
 /** Weak-point categories tracked after a test session */
 export type WeakCategory = '人物' | '时间' | '地点' | '任务' | '数字';
 
@@ -18,9 +20,15 @@ export interface ChunkHint {
   text: string;
 }
 
+export type PaperLevel = 'easy' | 'medium' | 'hard';
+
 export interface Paper {
   id: string;
   title: string;
+  /** Difficulty; formal test uses only 'medium' so scores stay comparable */
+  level: PaperLevel;
+  /** Methods this paper suits (reserved for future method-based review) */
+  methods: MethodId[];
   /** Full passage text (TTS fallback + teaching) */
   passage: string;
   /** Prefers local pre-recorded file; falls back to TTS if missing/error */

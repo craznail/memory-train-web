@@ -7,7 +7,7 @@ import { QuestionCard } from '../components/QuestionCard';
 import { SessionStatusBar } from '../components/SessionStatusBar';
 import { CoachBar } from '../components/CoachBar';
 import { CoachReviewCard } from '../components/CoachReviewCard';
-import { PAPERS, pickPaperByIndex } from '../data/papers';
+import { TEST_PAPERS, pickPaperByIndex } from '../data/papers';
 import { useListenSession } from '../hooks/useListenSession';
 import { gradeAnswers, computeTestScore, isAnswerCorrect } from '../lib/scoring';
 import { saveScore } from '../lib/storage';
@@ -59,18 +59,18 @@ export function TestSession() {
         <div className="muted">本次试卷</div>
         <div style={{ fontWeight: 700 }}>{paper.title}</div>
         <div className="row" style={{ marginTop: 8, gap: 6, flexWrap: 'wrap' }}>
-          {PAPERS.map((p, i) => (
+          {TEST_PAPERS.map((p, i) => (
             <button
               key={p.id}
               type="button"
               className={
-                i === paperIndex % PAPERS.length ? 'btn-primary' : 'btn-secondary'
+                i === paperIndex % TEST_PAPERS.length ? 'btn-primary' : 'btn-secondary'
               }
               style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
               disabled={session.phase !== 'ready'}
               onClick={() => navigate(`/test?p=${i}`, { replace: true })}
             >
-              {String.fromCharCode(65 + i)}
+              {i + 1}
             </button>
           ))}
         </div>

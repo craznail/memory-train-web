@@ -1,7 +1,9 @@
+export type MethodId = 'chunking' | 'association' | 'story' | 'encoding' | 'imagery' | 'palace';
+
 export type MethodStatus = 'ready' | 'coming';
 
 export interface MethodDef {
-  id: string;
+  id: MethodId;
   title: string;
   subtitle: string;
   emoji: string;
