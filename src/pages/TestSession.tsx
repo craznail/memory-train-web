@@ -45,7 +45,7 @@ export function TestSession() {
 
   return (
     <Layout title="测听力">
-      {session.phase !== 'answering' && (
+      {session.phase !== 'answering' && session.phase !== 'interference' && (
         <>
       <SessionStatusBar
         phase={session.phase}

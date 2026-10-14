@@ -10,6 +10,10 @@ import { StepDots, PlayCard, Chevron } from '../components/v2/V2';
 import { PalaceExplainer } from '../components/v2/PalaceExplainer';
 import hero1x from '../assets/illustrations/hero-elephant-landscape@1x.webp';
 import hero2x from '../assets/illustrations/hero-elephant-landscape@2x.webp';
+import empty1x from '../assets/illustrations/elephant-empty@1x.webp';
+import empty2x from '../assets/illustrations/elephant-empty@2x.webp';
+import correct1x from '../assets/illustrations/elephant-correct@1x.webp';
+import correct2x from '../assets/illustrations/elephant-correct@2x.webp';
 import { pickPaperByIndex } from '../data/papers';
 import { getMethod } from '../data/methods';
 import { useListenSession } from '../hooks/useListenSession';
@@ -19,6 +23,31 @@ import { gradeAnswers, summarizePractice, isAnswerCorrect } from '../lib/scoring
 import type { PracticeSummary } from '../types';
 
 const STEPS = ['盲听', '讲解', '带提示再听', '对比'] as const;
+
+function CompareColumns({ blind, after }: { blind: PracticeSummary | null; after: PracticeSummary | null }) {
+  const total = after?.total ?? blind?.total ?? 5;
+  const b = blind?.correct ?? 0;
+  const a = after?.correct ?? 0;
+  const delta = a - b;
+  return (
+    <div className="cmp-grid" data-testid="compare">
+      <div className="cmp-col">
+        <span className="tag">盲听</span>
+        <span className="num"><strong>{b}</strong><span>/{total}</span></span>
+        <img src={empty1x} srcSet={`${empty1x} 1x, ${empty2x} 2x`} alt="" aria-hidden="true" />
+      </div>
+      <div className="cmp-delta" aria-label={`变化 ${delta >= 0 ? '+' : ''}${delta}`}>
+        <svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><path d="M2 11h22M17 4l8 7-8 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+        <span>{delta >= 0 ? `+${delta}` : delta}</span>
+      </div>
+      <div className="cmp-col after">
+        <span className="tag">用方法后</span>
+        <span className="num"><strong>{a}</strong><span>/{total}</span></span>
+        <img src={correct1x} srcSet={`${correct1x} 1x, ${correct2x} 2x`} alt="" aria-hidden="true" />
+      </div>
+    </div>
+  );
+}
 
 export function TeachSession() {
   const { methodId = 'chunking' } = useParams();
@@ -248,42 +277,31 @@ export function TeachSession() {
       )}
 
       {session.phase === 'compare' && (
-        <div className="card stack">
-          <div className="page-title" style={{ fontSize: 18 }}>
-            前后对比
-          </div>
-          <div className="row" style={{ justifyContent: 'space-between' }}>
-            <span>盲听正确</span>
-            <strong>
-              {blindSummary ? `${blindSummary.correct}/${blindSummary.total}` : '—'}
-            </strong>
-          </div>
-          <div className="row" style={{ justifyContent: 'space-between' }}>
-            <span>方法后再测</span>
-            <strong className="success-text">
-              {afterSummary ? `${afterSummary.correct}/${afterSummary.total}` : '—'}
-            </strong>
-          </div>
-          <p className="muted">教学不计正式分。可回方法列表继续学，或去练听力巩固。</p>
+        <>
+          <section className="card stack" aria-labelledby="cmp-h">
+            <h2 id="cmp-h" className="serif" style={{ fontSize: 24, fontWeight: 900 }}>对比结果</h2>
+            <p className="muted">用了「{method.title}」前后，答对的题数对比（教学不计正式分）。</p>
+            <CompareColumns blind={blindSummary} after={afterSummary} />
+          </section>
           {method.id === 'palace' && (
-            <PalaceRouteCard
-              pegs={palacePegs}
-              scenes={confirmedScenes}
-              placements={scenePlacements}
-              selectedId={null}
-              onSelect={() => {}}
-              onPlace={() => {}}
-              mode="recall"
-              revealed
-            />
+            <section className="card stack" aria-labelledby="route-h" data-testid="route-recall">
+              <h2 id="route-h" className="serif" style={{ fontSize: 22, fontWeight: 900 }}>路线回忆</h2>
+              <p className="muted">把要记的内容依次放在这条熟悉的路线上：</p>
+              <ol className="route-dots">
+                {method.replayCues.map((c, i) => (
+                  <li key={c}><span className="n">{i + 1}</span>{c}</li>
+                ))}
+              </ol>
+            </section>
           )}
           <Link to="/methods" className="btn-gradient btn-cta press">
             返回方法列表
+            <Chevron />
           </Link>
-          <Link to="/" className="btn-secondary">
+          <Link to="/" className="btn-soft press">
             返回首页
           </Link>
-        </div>
+        </>
       )}
     </Layout>
   );

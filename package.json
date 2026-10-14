@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview",
-    "test": "npx --yes tsx --import ./scripts/test-asset-hooks.mjs --test src/lib/imageGen.test.ts src/lib/tongyi.test.ts src/lib/confirmedScenes.test.ts src/lib/sceneImageCache.test.ts src/lib/dailyTraining.test.ts src/pages/Home.test.tsx src/lib/scoring.test.ts src/pages/ScoreReport.test.tsx"
+    "test": "npx --yes tsx --import ./scripts/test-asset-hooks.mjs --test src/lib/imageGen.test.ts src/lib/tongyi.test.ts src/lib/confirmedScenes.test.ts src/lib/sceneImageCache.test.ts src/lib/dailyTraining.test.ts src/pages/Home.test.tsx src/lib/scoring.test.ts src/pages/ScoreReport.test.tsx src/pages/TestResult.test.tsx"
   },
   "dependencies": {
     "@capacitor/android": "^6.2.2",

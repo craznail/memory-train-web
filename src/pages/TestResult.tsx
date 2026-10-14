@@ -1,17 +1,28 @@
 import { Link, useLocation, Navigate } from 'react-router-dom';
 import { Layout } from '../components/Layout';
-import { WeaknessTags } from '../components/WeaknessTags';
-import { CategoryBreakdown } from '../components/CategoryBreakdown';
-import { computeCategoryStats } from '../lib/scoring';
+import { CategoryIcon } from '../components/v2/ReportParts';
+import { computeCategoryStats, weakestTwo } from '../lib/scoring';
 import type { AnswerRecord, ScoreBreakdown } from '../types';
 import { getPaperById } from '../data/papers';
-import { formatScoreDate } from '../lib/storage';
+import hero1x from '../assets/illustrations/hero-elephant-landscape@1x.webp';
+import hero2x from '../assets/illustrations/hero-elephant-landscape@2x.webp';
 
 interface LocState {
   score: ScoreBreakdown;
   records: AnswerRecord[];
   paperId: string;
 }
+
+export type RowResult = 'correct' | 'wrong' | 'missed';
+export function rowResult(r: AnswerRecord): RowResult {
+  return r.missed ? 'missed' : r.correct ? 'correct' : 'wrong';
+}
+
+const MARK: Record<RowResult, string> = {
+  correct: 'M5 12l5 5 9-10',
+  wrong: 'M7 7l10 10M17 7L7 17',
+  missed: 'M7 12h10',
+};
 
 export function TestResult() {
   const loc = useLocation();
@@ -20,81 +31,85 @@ export function TestResult() {
 
   const { score, records } = state;
   const paper = getPaperById(state.paperId);
-  const stats = score.categoryStats?.length
-    ? score.categoryStats
-    : computeCategoryStats(records);
+  const stats = score.categoryStats?.length ? score.categoryStats : computeCategoryStats(records);
+  const correct = records.filter((r) => r.correct).length;
+  const weak = weakestTwo(stats);
 
   return (
-    <Layout title="测评结果">
-      <div className="card" style={{ textAlign: 'center', padding: 24 }}>
-        <div className="muted">综合记忆分</div>
-        <div
-          style={{
-            fontSize: 56,
-            fontWeight: 800,
-            color: 'var(--color-primary)',
-            lineHeight: 1,
-            margin: '8px 0',
-          }}
-        >
-          {score.overall}
+    <Layout title="测听力">
+      <section className="card report-banner res-banner" aria-label="测试完成">
+        <img src={hero1x} srcSet={`${hero1x} 1x, ${hero2x} 2x`} alt="" aria-hidden="true" />
+        <div className="inner">
+          <h2>测试完成</h2>
+          <div className="total" data-testid="result-score">
+            <strong>{correct}</strong>
+            <span>/ {records.length}</span>
+          </div>
+          <div className="sub">
+            抗干扰<strong>{score.antiInterference}</strong>分
+          </div>
         </div>
-        <div className="muted">{formatScoreDate(score.date)}</div>
-      </div>
+      </section>
 
-      <div className="card stack" style={{ gap: 8 }}>
-        <div className="row" style={{ justifyContent: 'space-between' }}>
-          <span>听觉记忆</span>
-          <strong>{score.auditory}</strong>
-        </div>
-        <div className="row" style={{ justifyContent: 'space-between' }}>
-          <span>抗干扰</span>
-          <strong>{score.antiInterference}</strong>
-        </div>
-        {paper && <div className="muted">试卷：{paper.title}</div>}
-      </div>
-
-      <CategoryBreakdown
-        stats={stats}
-        interferencePassed={
-          score.interferencePassed ??
-          (score.antiInterference >= 100 ? true : score.antiInterference <= 40 ? false : null)
-        }
-        antiInterferenceScore={score.antiInterference}
-      />
-
-      <WeaknessTags weakPoints={score.weakPoints} />
-
-      <div className="card stack">
-        <div style={{ fontWeight: 700 }}>答题明细</div>
-        {records.map((r) => {
+      <ul className="stack" style={{ gap: 10 }}>
+        {records.map((r, i) => {
           const q = paper?.questions.find((x) => x.id === r.questionId);
+          const res = rowResult(r);
           return (
-            <div key={r.questionId} style={{ borderTop: '1px solid rgba(232, 200, 170, 0.6)', paddingTop: 8 }}>
-              <div className="muted">
-                [{r.category}] {q?.prompt}
+            <li key={r.questionId} className="card res-row" data-testid="result-row" style={{ listStyle: 'none' }}>
+              <div className="res-cat">
+                <CategoryIcon category={r.category} size={40} />
+                <div>
+                  <small>第 {i + 1} 题</small>
+                  <b>{r.category}</b>
+                </div>
               </div>
-              <div className={r.correct ? 'success-text' : 'error-text'} style={{ fontWeight: 600 }}>
-                {r.missed
-                  ? '未作答'
-                  : r.correct
-                    ? `正确：${r.userAnswer}`
-                    : `你的答案：${r.userAnswer}（应为 ${q?.answer}）`}
+              <div className="res-ans" data-result={res}>
+                <span className="mark" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24"><path d={MARK[res]} fill="none" stroke="#fff" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                </span>
+                {res === 'missed' ? (
+                  <span>未作答</span>
+                ) : res === 'correct' ? (
+                  <span>正确：{r.userAnswer}</span>
+                ) : (
+                  <span>
+                    你的答案：{r.userAnswer}
+                    <small>（应为 {q?.answer ?? '—'}）</small>
+                  </span>
+                )}
               </div>
-            </div>
+            </li>
           );
         })}
-      </div>
+      </ul>
 
-      <Link to="/report" className="btn-primary">
-        查看历史报告
-      </Link>
-      <Link to="/" className="btn-secondary">
-        返回首页
-      </Link>
-      <Link to="/test" className="btn-secondary">
+      <section className="card" aria-labelledby="res-weak-h">
+        <div className="v2-section-h">
+          <h2 id="res-weak-h">弱项</h2>
+          <span>正确率最低的类别，建议重点练习</span>
+        </div>
+        {weak.length ? (
+          <div className="row" style={{ gap: 10, flexWrap: 'wrap' }}>
+            {weak.map((w) => (
+              <span key={w.category} className="weak-chip" data-testid="weak-chip">
+                <CategoryIcon category={w.category} size={28} />
+                {w.category}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <p className="success-text" style={{ fontWeight: 600 }}>全部答对，暂无弱项！</p>
+        )}
+      </section>
+
+      <Link to="/test" className="btn-gradient btn-cta press">
         再测一次
       </Link>
+      <div className="btn-pair">
+        <Link to="/report" className="btn-soft press">查看历史报告</Link>
+        <Link to="/" className="btn-soft press">返回首页</Link>
+      </div>
     </Layout>
   );
 }
