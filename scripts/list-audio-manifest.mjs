@@ -1,9 +1,5 @@
-/** List required pre-recorded audio paths for papers A/B/C */
-const required = [
-  'public/audio/papers/A/script.mp3',
-  'public/audio/papers/B/script.mp3',
-  'public/audio/papers/C/script.mp3',
-];
-console.log('Required audio files (16kHz mono mp3 recommended):');
-for (const p of required) console.log(' -', p);
-console.log('\nMap: paper-a→A, paper-b→B, paper-c→C. Place files then rebuild/redeploy.');
+/** List required pre-recorded audio paths for all papers (core A/B/C + bank #11) */
+const dirs = ['A', 'B', 'C', 'E1', 'E2', 'E3', 'M1', 'M2', 'M3', 'H1', 'H2', 'H3'];
+console.log('Required audio files (24kHz mono mp3, 48kbps):');
+for (const d of dirs) console.log(' -', `public/audio/papers/${d}/script.mp3`);
+console.log('\nMap: paper-a→A … paper-e1→E1, paper-m1→M1, paper-h1→H1. A/B/C: 晓晓; bank: DashScope qwen3-tts-flash (Cherry), key from env only.');

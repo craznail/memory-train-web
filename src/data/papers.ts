@@ -1,10 +1,13 @@
 import { assetUrl } from '../lib/assetUrl';
-import type { Paper } from '../types';
+import type { Paper, PaperLevel } from '../types';
+import { BANK_PAPERS } from './paperBank';
 
 /** 2–3 parallel fixed papers: same structure/difficulty, different content */
-export const PAPERS: Paper[] = [
+const CORE_PAPERS: Paper[] = [
   {
     id: 'paper-a',
+    level: 'medium',
+    methods: ['chunking', 'association', 'story'],
     audioUrl: assetUrl('audio/papers/A/script.mp3'),
     title: '试卷 A · 周末安排',
     passage:
@@ -58,6 +61,8 @@ export const PAPERS: Paper[] = [
   },
   {
     id: 'paper-b',
+    level: 'medium',
+    methods: ['chunking', 'association', 'story'],
     audioUrl: assetUrl('audio/papers/B/script.mp3'),
     title: '试卷 B · 出差行程',
     passage:
@@ -111,6 +116,8 @@ export const PAPERS: Paper[] = [
   },
   {
     id: 'paper-c',
+    level: 'medium',
+    methods: ['chunking', 'association', 'story'],
     audioUrl: assetUrl('audio/papers/C/script.mp3'),
     title: '试卷 C · 家庭聚会',
     passage:
@@ -164,20 +171,37 @@ export const PAPERS: Paper[] = [
   },
 ];
 
+/** All papers (core A/B/C + graded bank) */
+export const PAPERS: Paper[] = [...CORE_PAPERS, ...BANK_PAPERS];
+
+/** Formal 测听力 uses ONLY medium papers so scores stay comparable */
+export const TEST_PAPERS: Paper[] = PAPERS.filter((p) => p.level === 'medium');
+
+export const LEVEL_LABEL: Record<PaperLevel, string> = {
+  easy: '初级',
+  medium: '中级',
+  hard: '高级',
+};
+
+export function papersByLevel(level: PaperLevel): Paper[] {
+  return PAPERS.filter((p) => p.level === level);
+}
+
 export function getPaperById(id: string): Paper | undefined {
   return PAPERS.find((p) => p.id === id);
 }
 
-/** Pick a paper: sequential by index or random for practice */
-export function pickPaper(preferId?: string): Paper {
+/** Pick a paper for practice: by id, else random within level (default all) */
+export function pickPaper(preferId?: string, level?: PaperLevel): Paper {
   if (preferId) {
     const found = getPaperById(preferId);
     if (found) return found;
   }
-  const idx = Math.floor(Math.random() * PAPERS.length);
-  return PAPERS[idx];
+  const pool = level ? papersByLevel(level) : PAPERS;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
+/** Formal test paper by index — medium only */
 export function pickPaperByIndex(index: number): Paper {
-  return PAPERS[index % PAPERS.length];
+  return TEST_PAPERS[index % TEST_PAPERS.length];
 }

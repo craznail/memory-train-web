@@ -612,3 +612,33 @@ img.fade-in {
     animation: peg-fade-in 150ms linear !important;
   }
 }
+
+/* 练听力难度切换（#11）：浅米色底槽 + 选中段橙色 */
+.level-switch {
+  display: flex;
+  margin-top: 10px;
+  padding: 3px;
+  gap: 3px;
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-pill);
+}
+.level-seg {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-aux);
+  font-weight: 600;
+  padding: 7px 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+.level-seg.is-active {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow-button);
+}
+.level-seg:disabled:not(.is-active) {
+  opacity: 0.55;
+  cursor: default;
+}

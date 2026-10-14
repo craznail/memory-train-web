@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Layout } from '../components/Layout';
 import { PlayOnceBar } from '../components/PlayOnceBar';
 import { InterferenceCard } from '../components/InterferenceCard';
@@ -7,13 +7,39 @@ import { QuestionCard } from '../components/QuestionCard';
 import { SessionStatusBar } from '../components/SessionStatusBar';
 import { CoachBar } from '../components/CoachBar';
 import { CoachReviewCard } from '../components/CoachReviewCard';
-import { pickPaper } from '../data/papers';
+import { pickPaper, LEVEL_LABEL } from '../data/papers';
+import type { PaperLevel } from '../types';
+
+const LEVELS: PaperLevel[] = ['easy', 'medium', 'hard'];
 import { useListenSession } from '../hooks/useListenSession';
 import { gradeAnswers, summarizePractice, isAnswerCorrect } from '../lib/scoring';
 
 export function PracticeSession() {
+  const [params, setParams] = useSearchParams();
+  const raw = params.get('level') as PaperLevel | null;
+  const level: PaperLevel = raw && LEVELS.includes(raw) ? raw : 'medium';
+  const paperId = params.get('paper') ?? undefined;
+  return (
+    <PracticeRun
+      key={`${level}:${paperId ?? ''}`}
+      level={level}
+      paperId={paperId}
+      onLevel={(l) => setParams({ level: l }, { replace: true })}
+    />
+  );
+}
+
+function PracticeRun({
+  level,
+  paperId,
+  onLevel,
+}: {
+  level: PaperLevel;
+  paperId?: string;
+  onLevel: (l: PaperLevel) => void;
+}) {
   const navigate = useNavigate();
-  const paper = useMemo(() => pickPaper(), []);
+  const paper = useMemo(() => pickPaper(paperId, level), [paperId, level]);
   const session = useListenSession({ paper, mode: 'practice', enableInterference: true });
   const [feedbackMode, setFeedbackMode] = useState(false);
 
@@ -51,8 +77,23 @@ export function PracticeSession() {
       />
 
       <div className="card" style={{ padding: '12px 16px' }}>
-        <div className="muted">练习材料（不计分）</div>
+        <div className="muted">练习材料（不计分） · {LEVEL_LABEL[paper.level]}</div>
         <div style={{ fontWeight: 700 }}>{paper.title}</div>
+        <div className="level-switch" role="radiogroup" aria-label="难度">
+          {LEVELS.map((l) => (
+            <button
+              key={l}
+              type="button"
+              role="radio"
+              aria-checked={l === paper.level}
+              className={l === paper.level ? 'level-seg is-active' : 'level-seg'}
+              disabled={session.phase !== 'ready'}
+              onClick={() => onLevel(l)}
+            >
+              {LEVEL_LABEL[l]}
+            </button>
+          ))}
+        </div>
       </div>
 
       {(session.phase === 'ready' || session.phase === 'playing') && (
