@@ -6,6 +6,10 @@ import { QuestionCard } from '../components/QuestionCard';
 import { GroupingHintPanel } from '../components/GroupingHintPanel';
 import { MethodHintPanel } from '../components/MethodHintPanel';
 import { PalaceRouteCard } from '../components/PalaceRouteCard';
+import { StepDots, PlayCard, Chevron } from '../components/v2/V2';
+import { PalaceExplainer } from '../components/v2/PalaceExplainer';
+import hero1x from '../assets/illustrations/hero-elephant-landscape@1x.webp';
+import hero2x from '../assets/illustrations/hero-elephant-landscape@2x.webp';
 import { pickPaperByIndex } from '../data/papers';
 import { getMethod } from '../data/methods';
 import { useListenSession } from '../hooks/useListenSession';
@@ -109,18 +113,8 @@ export function TeachSession() {
 
   return (
     <Layout title={method.title}>
-      <div className="step-dots" aria-label="学习步骤">
-        {STEPS.map((s, i) => (
-          <span
-            key={s}
-            className={`step-dot ${i === stepIndex ? 'active' : ''} ${i < stepIndex ? 'done' : ''}`}
-            title={s}
-          />
-        ))}
-      </div>
-      <p className="muted" style={{ textAlign: 'center' }}>
-        步骤 {stepIndex + 1}/4 · {STEPS[stepIndex]}（不计分）
-      </p>
+      <StepDots steps={STEPS} active={stepIndex} />
+      <p className="muted" style={{ textAlign: 'center', marginTop: -4 }}>教学流程不计正式分</p>
 
       {(session.phase === 'ready' || session.phase === 'playing') && (
         <>
@@ -130,7 +124,7 @@ export function TeachSession() {
               先不看任何提示，听一遍材料，然后回答具体问题。
             </p>
           </div>
-          <PlayOnceBar
+          <PlayCard
             playStatus={session.playStatus}
             phase={session.phase}
             playedOnce={session.playedOnce}
@@ -138,7 +132,9 @@ export function TeachSession() {
               setAnsweringPass('blind');
               session.startPlay(false);
             }}
-            hint="盲听阶段不会显示方法提示"
+            img1x={hero1x}
+            img2x={hero2x}
+            note="盲听阶段不会显示方法提示"
           />
         </>
       )}
@@ -158,12 +154,18 @@ export function TeachSession() {
 
       {session.phase === 'explain' && (
         <div className="card stack">
-          <div className="page-title" style={{ fontSize: 18 }}>
-            {method.title}
-          </div>
-          {method.explain.map((p) => (
-            <p key={p.slice(0, 12)}>{p}</p>
-          ))}
+          <h2 className="serif" style={{ fontSize: 24, fontWeight: 900 }}>
+            什么是{method.title}？
+          </h2>
+          {method.id === 'palace' && <PalaceExplainer stops={method.replayCues} />}
+          <ol className="v2-numlist">
+            {method.explain.map((p, i) => (
+              <li key={p.slice(0, 12)}>
+                <span className="n" aria-hidden="true">{i + 1}</span>
+                <span>{p}</span>
+              </li>
+            ))}
+          </ol>
           {method.example && <p className="muted">{method.example}</p>}
           {blindSummary && (
             <p>
@@ -193,8 +195,9 @@ export function TeachSession() {
               helper="下一轮播放时只显示这些维度标签，不摊开答案。"
             />
           )}
-          <button type="button" className="btn-primary" onClick={session.goReplayReady}>
-            下一步：带提示再听
+          <button type="button" className="btn-gradient btn-cta press" onClick={session.goReplayReady}>
+            下一步
+            <Chevron />
           </button>
         </div>
       )}
@@ -274,7 +277,7 @@ export function TeachSession() {
               revealed
             />
           )}
-          <Link to="/methods" className="btn-primary">
+          <Link to="/methods" className="btn-gradient btn-cta press">
             返回方法列表
           </Link>
           <Link to="/" className="btn-secondary">
