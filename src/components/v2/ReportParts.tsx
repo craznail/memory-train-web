@@ -41,8 +41,20 @@ export function CategoryBars({ stats }: { stats: CategoryStat[] }) {
 }
 
 /** 历次成绩: one point per formal test, oldest → newest. */
+export const HISTORY_MIN_POINTS = 2;
+
+/** 历次成绩: one point per real formal test, oldest → newest. Fewer than 2 → empty state. */
 export function HistoryLine({ history }: { history: ScoreBreakdown[] }) {
-  if (!history.length) return null;
+  if (history.length < HISTORY_MIN_POINTS) {
+    return (
+      <section className="card" aria-labelledby="hist-h" data-testid="history-empty">
+        <div className="v2-section-h"><h2 id="hist-h">历次成绩</h2></div>
+        <p className="muted" style={{ lineHeight: 1.6 }}>
+          {history.length === 0 ? '还没有正式测试记录。' : '目前只有 1 次正式测试。'}再完成 {HISTORY_MIN_POINTS - history.length} 次「测听力」，这里就会画出成绩变化。
+        </p>
+      </section>
+    );
+  }
   const pts = [...history].slice(0, 8).reverse();
   const W = 330, H = 170, L = 30, R = 14, T = 22, B = 30;
   const x = (i: number) => (pts.length === 1 ? (L + W - R) / 2 : L + (i * (W - L - R)) / (pts.length - 1));

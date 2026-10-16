@@ -43,10 +43,12 @@ export function PlayCard({ phase, playedOnce, playStatus = 'idle', onPlay, img1x
     <div className="card v2-play-card" data-testid="play-card" data-state={state}>
       <img className="bg" src={img1x} srcSet={`${img1x} 1x, ${img2x} 2x`} alt="" aria-hidden="true" />
       <div className="inner">
+        {!played && (
         <span className="v2-pill">
           <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="var(--color-primary)" /></svg>
           仅播放一次
         </span>
+        )}
         <div className="v2-play-row">
           <button type="button" className="v2-play-btn press" data-state={state} disabled={playing || played} onClick={onPlay} aria-label={label}>
             {played ? (

@@ -17,28 +17,47 @@ import correct2x from '../assets/illustrations/elephant-correct@2x.webp';
 import { pickPaperByIndex } from '../data/papers';
 import { getMethod } from '../data/methods';
 import { useListenSession } from '../hooks/useListenSession';
-import { loadConfirmedScenes, placeConfirmedImage } from '../lib/confirmedScenes';
+import { loadConfirmedScenes, placeConfirmedImage, imageUrlForPeg } from '../lib/confirmedScenes';
 import { useDisplayScenes } from '../hooks/useDisplayScenes';
 import { gradeAnswers, summarizePractice, isAnswerCorrect } from '../lib/scoring';
 import type { PracticeSummary } from '../types';
 
 const STEPS = ['盲听', '讲解', '带提示再听', '对比'] as const;
 
-function CompareColumns({ blind, after }: { blind: PracticeSummary | null; after: PracticeSummary | null }) {
+/** 对比第 4 步：只有提升才显示箭头和 +N；持平或下降用鼓励文案。 */
+export function compareCase(blind: number, after: number): 'improved' | 'flat' {
+  return after > blind ? 'improved' : 'flat';
+}
+
+export function CompareColumns({ blind, after }: { blind: PracticeSummary | null; after: PracticeSummary | null }) {
   const total = after?.total ?? blind?.total ?? 5;
   const b = blind?.correct ?? 0;
   const a = after?.correct ?? 0;
   const delta = a - b;
+  if (compareCase(b, a) === 'flat') {
+    return (
+      <div className="cmp-flat" data-testid="compare" data-case="flat">
+        <img src={hero1x} srcSet={`${hero1x} 1x, ${hero2x} 2x`} alt="" aria-hidden="true" />
+        <div>
+          <div className="scores">
+            <span>盲听 <strong>{b}</strong>/{total}</span>
+            <span>用方法后 <strong>{a}</strong>/{total}</span>
+          </div>
+          <p>方法要多练几次才顺手</p>
+        </div>
+      </div>
+    );
+  }
   return (
-    <div className="cmp-grid" data-testid="compare">
+    <div className="cmp-grid" data-testid="compare" data-case="improved">
       <div className="cmp-col">
         <span className="tag">盲听</span>
         <span className="num"><strong>{b}</strong><span>/{total}</span></span>
         <img src={empty1x} srcSet={`${empty1x} 1x, ${empty2x} 2x`} alt="" aria-hidden="true" />
       </div>
-      <div className="cmp-delta" aria-label={`变化 ${delta >= 0 ? '+' : ''}${delta}`}>
+      <div className="cmp-delta" aria-label={`提升 ${delta} 题`}>
         <svg width="30" height="22" viewBox="0 0 30 22" aria-hidden="true"><path d="M2 11h22M17 4l8 7-8 7" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        <span>{delta >= 0 ? `+${delta}` : delta}</span>
+        <span>+{delta}</span>
       </div>
       <div className="cmp-col after">
         <span className="tag">用方法后</span>
@@ -186,7 +205,7 @@ export function TeachSession() {
           <h2 className="serif" style={{ fontSize: 24, fontWeight: 900 }}>
             什么是{method.title}？
           </h2>
-          {method.id === 'palace' && <PalaceExplainer stops={method.replayCues} />}
+          {method.id === 'palace' && <PalaceExplainer />}
           <ol className="v2-numlist">
             {method.explain.map((p, i) => (
               <li key={p.slice(0, 12)}>
@@ -204,18 +223,7 @@ export function TeachSession() {
           )}
           {isChunking ? (
             <GroupingHintPanel chunks={paper.chunks} visible mode="full" />
-          ) : method.id === 'palace' ? (
-            <PalaceRouteCard
-              pegs={palacePegs}
-              scenes={confirmedScenes}
-              placements={scenePlacements}
-              selectedId={selectedSceneId}
-              onSelect={setSelectedSceneId}
-              onPlace={placeScene}
-              mode="place"
-              revealed={false}
-            />
-          ) : (
+          ) : method.id === 'palace' ? null : (
             <MethodHintPanel
               title={`${method.title} · 挂钩维度`}
               cues={method.replayCues}
@@ -249,7 +257,7 @@ export function TeachSession() {
               selectedId={selectedSceneId}
               onSelect={setSelectedSceneId}
               onPlace={placeScene}
-              mode="recall"
+              mode={session.phase === 'replaying' ? 'recall' : 'place'}
               revealed={false}
             />
           ) : (
@@ -280,7 +288,7 @@ export function TeachSession() {
         <>
           <section className="card stack" aria-labelledby="cmp-h">
             <h2 id="cmp-h" className="serif" style={{ fontSize: 24, fontWeight: 900 }}>对比结果</h2>
-            <p className="muted">用了「{method.title}」前后，答对的题数对比（教学不计正式分）。</p>
+            <p className="muted">用了「{method.title}」前后，答对的题数对比。</p>
             <CompareColumns blind={blindSummary} after={afterSummary} />
           </section>
           {method.id === 'palace' && (
@@ -288,9 +296,16 @@ export function TeachSession() {
               <h2 id="route-h" className="serif" style={{ fontSize: 22, fontWeight: 900 }}>路线回忆</h2>
               <p className="muted">把要记的内容依次放在这条熟悉的路线上：</p>
               <ol className="route-dots">
-                {method.replayCues.map((c, i) => (
-                  <li key={c}><span className="n">{i + 1}</span>{c}</li>
-                ))}
+                {method.replayCues.map((c, i) => {
+                  const url = imageUrlForPeg(scenePlacements, c, confirmedScenes);
+                  return (
+                    <li key={c} data-testid="route-stop">
+                      <span className="n">{i + 1}</span>
+                      {c}
+                      {url && <img className="placed" src={url} alt={`${c}放的画面`} width={40} height={40} />}
+                    </li>
+                  );
+                })}
               </ol>
             </section>
           )}

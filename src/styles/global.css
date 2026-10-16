@@ -734,3 +734,18 @@ img.fade-in {
 .route-dots .n { width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--color-primary); color: #fff; font-weight: 800; box-shadow: var(--shadow-button); }
 .intf-input::-webkit-outer-spin-button, .intf-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .intf-input { -moz-appearance: textfield; appearance: textfield; }
+
+/* 记忆宫殿讲解插画 + 代码叠加编号 */
+.pe-frame { position: relative; border-radius: var(--radius-lg); overflow: hidden; background: #FFF6EC; }
+.pe-frame img { display: block; width: 100%; height: auto; }
+.pe-frame svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.pe-pin { position: absolute; display: flex; align-items: center; gap: 4px; transform: translate(-15px, -15px); }
+.pe-pin.left { flex-direction: row-reverse; transform: translate(calc(-100% + 15px), -15px); }
+.pe-pin .n { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--color-primary); color: #fff; font-weight: 800; font-size: 15px; border: 2.5px solid #fff; box-shadow: var(--shadow-button); }
+.pe-pin .tag { padding: 2px 9px; border-radius: var(--radius-pill); background: rgba(255, 252, 246, 0.95); border: 1px solid #F1CFAE; font-size: 12px; font-weight: 700; color: var(--color-text); white-space: nowrap; }
+.route-dots .placed { width: 40px; height: 40px; border-radius: 10px; object-fit: cover; border: 2px solid #fff; box-shadow: var(--shadow-card); }
+.cmp-flat { display: flex; align-items: center; gap: 14px; padding: 14px; border-radius: var(--radius-md); background: #FFF8EF; border: 1px solid #F3DCC4; }
+.cmp-flat img { width: 120px; height: 90px; object-fit: cover; object-position: 78% 40%; border-radius: 12px; }
+.cmp-flat .scores { display: flex; gap: 14px; font-size: var(--font-aux); color: var(--color-text-secondary); }
+.cmp-flat .scores strong { font-size: 26px; font-weight: 900; color: var(--color-primary-score); }
+.cmp-flat p { font-weight: 700; color: var(--color-text); margin-top: 6px; }
