@@ -112,3 +112,24 @@ export function summarizePractice(records: AnswerRecord[]): PracticeSummary {
 export function categoryLabel(c: QuestionCategory): string {
   return c;
 }
+
+/**
+ * Report「弱项」: the two lowest-accuracy categories that were actually asked.
+ * Ties keep the fixed category order (人物/时间/地点/任务/数字). Categories with
+ * 100% accuracy are never listed as weak.
+ */
+export function weakestTwo(
+  stats: readonly CategoryStat[],
+): { category: WeakCategory; pct: number }[] {
+  return stats
+    .filter((s) => s.total > 0)
+    .map((s, i) => ({ category: s.category, pct: Math.round((s.correct / s.total) * 100), i }))
+    .filter((s) => s.pct < 100)
+    .sort((a, b) => a.pct - b.pct || a.i - b.i)
+    .slice(0, 2)
+    .map(({ category, pct }) => ({ category, pct }));
+}
+
+export function categoryPct(s: CategoryStat): number {
+  return s.total ? Math.round((s.correct / s.total) * 100) : 0;
+}

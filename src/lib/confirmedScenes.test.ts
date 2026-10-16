@@ -320,8 +320,8 @@ describe('confirmed scenes tray', () => {
     assert.match(palace, /phase="recall"/);
     assert.match(palace, /phase="place"/);
     assert.match(teach, /\/teach\/:methodId|method\.id === 'palace'/);
-    assert.match(teach, /mode="place"/);
-    assert.match(teach, /mode="recall"/);
+    // step 3: place before replay, recall while replaying
+    assert.match(teach, /mode=\{session\.phase === 'replaying' \? 'recall' : 'place'\}/);
     assert.match(teach, /revealed=\{false\}/);
     assert.match(teach, /revealed/);
   });

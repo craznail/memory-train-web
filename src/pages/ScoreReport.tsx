@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 import { Layout } from '../components/Layout';
-import { HistoryChart } from '../components/HistoryChart';
-import { CategoryBreakdown } from '../components/CategoryBreakdown';
-import { WeaknessTags } from '../components/WeaknessTags';
+import { CategoryBars, HistoryLine, WeakCards } from '../components/v2/ReportParts';
+import { Chevron } from '../components/v2/V2';
 import { loadScoreHistory, formatScoreDate } from '../lib/storage';
+import hero1x from '../assets/illustrations/hero-elephant-landscape@1x.webp';
+import hero2x from '../assets/illustrations/hero-elephant-landscape@2x.webp';
 import empty1x from '../assets/illustrations/elephant-empty@1x.webp';
 import empty2x from '../assets/illustrations/elephant-empty@2x.webp';
 
@@ -46,46 +47,38 @@ export function ScoreReport() {
         </div>
       ) : (
         <>
-          <div className="card" style={{ textAlign: 'center', padding: 20 }}>
-            <div className="muted">最近综合分</div>
-            <div
-              style={{
-                fontSize: 48,
-                fontWeight: 800,
-                color: 'var(--color-primary)',
-                lineHeight: 1.1,
-              }}
-            >
-              {latest.overall}
+          <section className="card report-banner" aria-label="本次成绩">
+            <img src={hero1x} srcSet={`${hero1x} 1x, ${hero2x} 2x`} alt="" aria-hidden="true" />
+            <div className="inner">
+              <h2>本次成绩</h2>
+              <div className="muted">{formatScoreDate(latest.date)} · 正式测听力</div>
+              <div className="total" data-testid="overall">
+                <strong>{latest.overall}</strong>
+                <span>/ 100</span>
+              </div>
             </div>
-            <div className="muted">{formatScoreDate(latest.date)}</div>
-          </div>
+          </section>
 
           {latest.categoryStats && latest.categoryStats.length > 0 ? (
-            <CategoryBreakdown
-              stats={latest.categoryStats}
-              interferencePassed={latest.interferencePassed}
-              antiInterferenceScore={latest.antiInterference}
-            />
+            <>
+              <CategoryBars stats={latest.categoryStats} />
+              <HistoryLine history={history} />
+              <WeakCards stats={latest.categoryStats} />
+            </>
           ) : (
-            <div className="card">
-              <div style={{ fontWeight: 700, marginBottom: 6 }}>听记细分</div>
-              <p className="muted">
-                本次为旧存档，仅有综合分。新完成的正式测会显示五类正确率。
-              </p>
-              <div className="row" style={{ justifyContent: 'space-between', marginTop: 8 }}>
-                <span>听觉记忆</span>
-                <strong>{latest.auditory}</strong>
+            <>
+              <div className="card">
+                <div style={{ fontWeight: 700, marginBottom: 6 }}>听记细分</div>
+                <p className="muted">本次为旧存档，仅有综合分。新完成的正式测会显示五类正确率。</p>
               </div>
-              <div className="row" style={{ justifyContent: 'space-between' }}>
-                <span>抗干扰</span>
-                <strong>{latest.antiInterference}</strong>
-              </div>
-            </div>
+              <HistoryLine history={history} />
+            </>
           )}
 
-          <WeaknessTags weakPoints={latest.weakPoints} />
-          <HistoryChart history={history} />
+          <Link to="/practice" className="btn-gradient btn-cta press">
+            去练习
+            <Chevron />
+          </Link>
         </>
       )}
 
