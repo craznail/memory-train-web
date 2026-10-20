@@ -613,6 +613,36 @@ img.fade-in {
   }
 }
 
+/* 练听力难度切换（#11）：浅米色底槽 + 选中段橙色 */
+.level-switch {
+  display: flex;
+  margin-top: 10px;
+  padding: 3px;
+  gap: 3px;
+  background: var(--color-primary-soft);
+  border-radius: var(--radius-pill);
+}
+.level-seg {
+  flex: 1;
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-size: var(--font-aux);
+  font-weight: 600;
+  padding: 7px 0;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+}
+.level-seg.is-active {
+  background: var(--color-primary);
+  color: #fff;
+  box-shadow: var(--shadow-button);
+}
+.level-seg:disabled:not(.is-active) {
+  opacity: 0.55;
+  cursor: default;
+}
+
 /* ===== 视觉 v2：测听力 / 能力报告 / 讲解页（#13） ===== */
 .btn-cta { display: flex; width: 100%; height: 52px; }
 .btn-cta:disabled { opacity: 0.45; cursor: not-allowed; box-shadow: none; }
@@ -749,3 +779,9 @@ img.fade-in {
 .cmp-flat .scores { display: flex; gap: 14px; font-size: var(--font-aux); color: var(--color-text-secondary); }
 .cmp-flat .scores strong { font-size: 26px; font-weight: 900; color: var(--color-primary-score); }
 .cmp-flat p { font-weight: 700; color: var(--color-text); margin-top: 6px; }
+
+/* 测听力试卷选择（#12，v2 简洁胶囊） */
+.paper-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.paper-chip { padding: 6px 14px; border-radius: var(--radius-pill); border: 1.5px solid var(--color-track); background: var(--color-card); color: var(--color-primary-text); font-size: var(--font-aux); font-weight: 700; cursor: pointer; }
+.paper-chip.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; box-shadow: var(--shadow-button); }
+.paper-chip:disabled:not(.is-active) { opacity: 0.55; cursor: default; }

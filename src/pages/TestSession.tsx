@@ -8,7 +8,7 @@ import { InterferenceCard } from '../components/InterferenceCard';
 import { SessionStatusBar } from '../components/SessionStatusBar';
 import { CoachBar } from '../components/CoachBar';
 import { CoachReviewCard } from '../components/CoachReviewCard';
-import { PAPERS, pickPaperByIndex } from '../data/papers';
+import { TEST_PAPERS, pickPaperByIndex } from '../data/papers';
 import { useListenSession } from '../hooks/useListenSession';
 import { gradeAnswers, computeTestScore } from '../lib/scoring';
 import { saveScore } from '../lib/storage';
@@ -56,19 +56,18 @@ export function TestSession() {
       <div className="card" style={{ padding: '12px 16px' }}>
         <div className="muted">本次试卷</div>
         <div style={{ fontWeight: 700 }}>{paper.title}</div>
-        <div className="row" style={{ marginTop: 8, gap: 6, flexWrap: 'wrap' }}>
-          {PAPERS.map((p, i) => (
+        <div className="paper-chips" role="radiogroup" aria-label="选择试卷">
+          {TEST_PAPERS.map((p, i) => (
             <button
               key={p.id}
               type="button"
-              className={
-                i === paperIndex % PAPERS.length ? 'btn-primary' : 'btn-secondary'
-              }
-              style={{ width: 'auto', padding: '6px 12px', fontSize: 13 }}
+              role="radio"
+              aria-checked={i === paperIndex % TEST_PAPERS.length}
+              className={i === paperIndex % TEST_PAPERS.length ? 'paper-chip is-active' : 'paper-chip'}
               disabled={session.phase !== 'ready'}
               onClick={() => navigate(`/test?p=${i}`, { replace: true })}
             >
-              {String.fromCharCode(65 + i)}
+              第 {i + 1} 套
             </button>
           ))}
         </div>
