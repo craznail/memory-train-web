@@ -32,10 +32,14 @@ interface PlayCardProps {
   img1x: string;
   img2x: string;
   note?: string;
+  /** Practice: no 仅播放一次 pill; after playback shows a 再听一遍 button */
+  onReplay?: () => void;
+  replaying?: boolean;
 }
 /** v2 single-play card: 仅播放一次 → 播放中 → 已播放（disabled）. */
-export function PlayCard({ phase, playedOnce, playStatus = 'idle', onPlay, img1x, img2x, note }: PlayCardProps) {
-  const playing = phase === 'playing';
+export function PlayCard({ phase, playedOnce, playStatus = 'idle', onPlay, img1x, img2x, note, onReplay, replaying = false }: PlayCardProps) {
+  const canReplay = !!onReplay;
+  const playing = phase === 'playing' || replaying;
   const played = playedOnce && !playing;
   const state = playing ? 'playing' : played ? 'played' : 'ready';
   const label = playing ? (playStatus === 'loading' ? '加载中…' : '播放中…') : played ? '已播放' : '播放听力材料';
@@ -43,7 +47,7 @@ export function PlayCard({ phase, playedOnce, playStatus = 'idle', onPlay, img1x
     <div className="card v2-play-card" data-testid="play-card" data-state={state}>
       <img className="bg" src={img1x} srcSet={`${img1x} 1x, ${img2x} 2x`} alt="" aria-hidden="true" />
       <div className="inner">
-        {!played && (
+        {!played && !canReplay && (
         <span className="v2-pill">
           <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="var(--color-primary)" /></svg>
           仅播放一次
@@ -59,7 +63,11 @@ export function PlayCard({ phase, playedOnce, playStatus = 'idle', onPlay, img1x
               <svg width="30" height="30" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z" fill="#fff" /></svg>
             )}
           </button>
-          {state === 'ready' ? (
+          {played && canReplay ? (
+            <button type="button" className="btn-soft v2-replay-btn press" onClick={onReplay}>
+              再听一遍
+            </button>
+          ) : state === 'ready' ? (
             <div className="v2-wave" aria-hidden="true">{WAVE.map((h, i) => <i key={i} style={{ height: h }} />)}</div>
           ) : (
             <span className="v2-play-state" role="status">{label}</span>
@@ -68,7 +76,7 @@ export function PlayCard({ phase, playedOnce, playStatus = 'idle', onPlay, img1x
         {playing && playStatus === 'error' ? (
           <p className="v2-play-note">预录加载失败，已切换系统语音兜底</p>
         ) : (
-          <p className="v2-play-note">{played ? '材料已播放，不可重听' : note ?? '请集中注意力，材料只播放一次'}</p>
+          <p className="v2-play-note">{played ? (canReplay ? '没听清可以再听一遍' : '材料已播放，不可重听') : note ?? (canReplay ? '请集中注意力听材料' : '请集中注意力，材料只播放一次')}</p>
         )}
       </div>
     </div>

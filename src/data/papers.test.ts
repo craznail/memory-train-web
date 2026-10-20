@@ -41,3 +41,8 @@ test('practice can pick by level', () => {
     for (let i = 0; i < 10; i++) assert.equal(pickPaper(undefined, l).level, l);
   }
 });
+
+test('paper titles use 第 N 套 and medium numbering matches the /test chips', () => {
+  for (const p of PAPERS) assert.match(p.title, /^第 \d 套 · /, p.id);
+  TEST_PAPERS.forEach((p, i) => assert.ok(p.title.startsWith(`第 ${i + 1} 套 · `), p.id));
+});

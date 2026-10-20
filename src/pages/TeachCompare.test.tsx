@@ -27,6 +27,9 @@ describe('Teach step 4 对比', () => {
       assert.doesNotMatch(html, /M2 11h22/);
       assert.doesNotMatch(html, /\+0|>-\d|−\d/);
       assert.match(html, new RegExp(`<strong>${b}</strong>.*<strong>${a}</strong>`));
+      assert.match(html, /class="cmp-grid"/, 'same two-column layout as improved');
+      assert.equal(html.match(/class="cmp-col/g)?.length, 2);
+      assert.doesNotMatch(html, /cmp-delta/);
     });
   }
 });

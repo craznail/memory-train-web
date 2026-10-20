@@ -8,7 +8,7 @@ export const BANK_PAPERS: Paper[] = [
     level: 'easy',
     methods: ['chunking', 'association'],
     audioUrl: assetUrl('audio/papers/E1/script.mp3'),
-    title: '初级 1 · 借书',
+    title: '第 1 套 · 借书',
     passage:
       '星期二下午三点，小明和同桌小红一起去学校图书馆还书。小明还了两本故事书，又借了一本恐龙百科。借完书，他们高高兴兴地回教室上课了。',
     chunks: [
@@ -63,7 +63,7 @@ export const BANK_PAPERS: Paper[] = [
     level: 'easy',
     methods: ['chunking', 'association'],
     audioUrl: assetUrl('audio/papers/E2/script.mp3'),
-    title: '初级 2 · 买文具',
+    title: '第 2 套 · 买文具',
     passage:
       '周六早上，爸爸带乐乐去小区门口的文具店。乐乐买了三支铅笔和一块橡皮，一共花了八元钱。回家后，乐乐把新文具整整齐齐地放进了书包。',
     chunks: [
@@ -118,7 +118,7 @@ export const BANK_PAPERS: Paper[] = [
     level: 'easy',
     methods: ['chunking', 'association'],
     audioUrl: assetUrl('audio/papers/E3/script.mp3'),
-    title: '初级 3 · 浇花值日',
+    title: '第 3 套 · 浇花值日',
     passage:
       '周四早上七点半，班长小芳提醒同学们，今天由第二组负责给教室窗台上的花浇水，一共有五盆花。小芳还说，浇水不要太多，水洒了要马上擦干。',
     chunks: [
@@ -173,7 +173,7 @@ export const BANK_PAPERS: Paper[] = [
     level: 'medium',
     methods: ['chunking', 'association', 'story'],
     audioUrl: assetUrl('audio/papers/M1/script.mp3'),
-    title: '中级 1 · 春游通知',
+    title: '第 4 套 · 春游通知',
     passage:
       '下周五早上八点，三年级二班要去森林公园春游。王老师提醒大家八点前在学校东门集合，每人带一瓶水和两样小零食，下午三点半坐大巴回学校。',
     chunks: [
@@ -228,7 +228,7 @@ export const BANK_PAPERS: Paper[] = [
     level: 'medium',
     methods: ['chunking', 'association', 'story'],
     audioUrl: assetUrl('audio/papers/M2/script.mp3'),
-    title: '中级 2 · 生日礼物',
+    title: '第 5 套 · 生日礼物',
     passage:
       '星期天上午十点，小雨和哥哥坐公交车去新华书店，给奶奶挑生日礼物。他们选了一本大字版的菜谱，花了四十五元，回家路上又在花店买了一束康乃馨。',
     chunks: [
@@ -283,7 +283,7 @@ export const BANK_PAPERS: Paper[] = [
     level: 'medium',
     methods: ['chunking', 'association', 'story'],
     audioUrl: assetUrl('audio/papers/M3/script.mp3'),
-    title: '中级 3 · 看牙医',
+    title: '第 6 套 · 看牙医',
     passage:
       '周三下午四点，妈妈接放学的阳阳去儿童医院看牙。医生说阳阳有一颗蛀牙，需要补牙，并叮嘱他每天刷牙两次、少吃糖，两周后再来复查。',
     chunks: [
@@ -338,7 +338,7 @@ export const BANK_PAPERS: Paper[] = [
     level: 'hard',
     methods: ['chunking', 'story', 'palace'],
     audioUrl: assetUrl('audio/papers/H1/script.mp3'),
-    title: '高级 1 · 运动会',
+    title: '第 1 套 · 运动会',
     passage:
       '学校运动会定在下周四举行。早上七点四十，全体同学先在操场集合，八点整开始入场仪式。四年级一班的刘洋报了跳远，他的好朋友刘阳报了八百米长跑。跳远比赛在沙坑区，九点半开始；长跑在跑道上，十点一刻开始。体育老师陈老师提醒大家穿运动鞋、带好号码牌，每个班要准备三面小彩旗，比赛结束后把垃圾带走，不要留在看台上。',
     chunks: [
@@ -393,7 +393,7 @@ export const BANK_PAPERS: Paper[] = [
     level: 'hard',
     methods: ['chunking', 'story', 'palace'],
     audioUrl: assetUrl('audio/papers/H2/script.mp3'),
-    title: '高级 2 · 坐高铁',
+    title: '第 2 套 · 坐高铁',
     passage:
       '暑假第一天，小婷和妈妈要坐高铁去南京看姑姑。她们原本订的是上午十点二十的车，后来改成了十点五十的车，在三号检票口进站。出发前妈妈让小婷检查背包：要带两本暑假作业、一顶遮阳帽和一个水杯。到南京南站后，姑姑会在一号出口等她们，小表弟小凯也会一起来接。晚上她们打算去玄武湖散步，再一起吃顿晚饭。她们还准备了一盒点心送给姑姑。',
     chunks: [
@@ -448,7 +448,7 @@ export const BANK_PAPERS: Paper[] = [
     level: 'hard',
     methods: ['chunking', 'story', 'palace'],
     audioUrl: assetUrl('audio/papers/H3/script.mp3'),
-    title: '高级 3 · 周末大扫除',
+    title: '第 3 套 · 周末大扫除',
     passage:
       '周六上午，奶奶家要大扫除。九点开始，爸爸负责擦客厅的窗户，妈妈整理厨房，哥哥小东去阳台给花换土，妹妹小冬负责把旧报纸捆好。奶奶说中午十二点前要干完，因为十二点半全家要去楼下的饺子馆吃饭。爸爸一共擦了六扇窗户，小冬捆了四捆报纸，送到小区的回收站换了十二元。下午两点，大家还要一起去超市买新拖把和几块抹布。',
     chunks: [
