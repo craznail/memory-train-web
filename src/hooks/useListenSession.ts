@@ -43,6 +43,8 @@ export function useListenSession({
   const [teachPass, setTeachPass] = useState<1 | 2>(1);
   const [blindScoreHint, setBlindScoreHint] = useState<number | null>(null);
   const [playStatus, setPlayStatus] = useState<PlayStatus>('idle');
+  /** practice-only: replaying the passage while staying in the current phase */
+  const [listeningAgain, setListeningAgain] = useState(false);
 
   const [coachEnabled, setCoachEnabledState] = useState(() =>
     coachAllowed ? loadCoachEnabled() : false,
@@ -105,6 +107,7 @@ export function useListenSession({
       setTeachPass(1);
       setBlindScoreHint(null);
       setPlayStatus('idle');
+      setListeningAgain(false);
       setCoachTip(null);
       setCoachShownTips([]);
       coachShownRef.current = [];
@@ -168,6 +171,20 @@ export function useListenSession({
       goAfterPlay,
     ],
   );
+
+  /** Practice only: 再听一遍 — replay without resetting phase, answers or question index. */
+  const listenAgain = useCallback(() => {
+    if (mode !== 'practice' || !playedOnce || listeningAgain) return;
+    setListeningAgain(true);
+    setPlayStatus('loading');
+    playPassage({
+      text: paper.passage,
+      audioUrl: paper.audioUrl,
+      estimatedDurationMs: estimateDurationMs(paper.passage),
+      onStatus: setPlayStatus,
+      onEnd: () => setListeningAgain(false),
+    });
+  }, [mode, playedOnce, listeningAgain, paper.passage, paper.audioUrl]);
 
   const submitInterference = useCallback(() => {
     const expected = paper.interference?.answer;
@@ -233,6 +250,8 @@ export function useListenSession({
     coachShownTips,
     finishCoachReview,
     startPlay,
+    listeningAgain,
+    listenAgain,
     submitInterference,
     nextQuestion,
     goToResult,

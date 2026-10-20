@@ -35,16 +35,23 @@ export function CompareColumns({ blind, after }: { blind: PracticeSummary | null
   const a = after?.correct ?? 0;
   const delta = a - b;
   if (compareCase(b, a) === 'flat') {
+    // 持平/下降：同样左右两栏，右栏换成闭眼听的小象，中间不放箭头
     return (
-      <div className="cmp-flat" data-testid="compare" data-case="flat">
-        <img src={hero1x} srcSet={`${hero1x} 1x, ${hero2x} 2x`} alt="" aria-hidden="true" />
-        <div>
-          <div className="scores">
-            <span>盲听 <strong>{b}</strong>/{total}</span>
-            <span>用方法后 <strong>{a}</strong>/{total}</span>
+      <div className="stack" style={{ gap: 10 }} data-testid="compare" data-case="flat">
+        <div className="cmp-grid">
+          <div className="cmp-col">
+            <span className="tag">盲听</span>
+            <span className="num"><strong>{b}</strong><span>/{total}</span></span>
+            <img src={empty1x} srcSet={`${empty1x} 1x, ${empty2x} 2x`} alt="" aria-hidden="true" />
           </div>
-          <p>方法要多练几次才顺手</p>
+          <div className="cmp-gap" aria-hidden="true" />
+          <div className="cmp-col after calm">
+            <span className="tag">用方法后</span>
+            <span className="num"><strong>{a}</strong><span>/{total}</span></span>
+            <img src={hero1x} srcSet={`${hero1x} 1x, ${hero2x} 2x`} alt="" aria-hidden="true" />
+          </div>
         </div>
+        <p className="cmp-encourage">方法要多练几次才顺手</p>
       </div>
     );
   }

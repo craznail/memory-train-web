@@ -785,3 +785,10 @@ img.fade-in {
 .paper-chip { padding: 6px 14px; border-radius: var(--radius-pill); border: 1.5px solid var(--color-track); background: var(--color-card); color: var(--color-primary-text); font-size: var(--font-aux); font-weight: 700; cursor: pointer; }
 .paper-chip.is-active { background: var(--color-primary); border-color: var(--color-primary); color: #fff; box-shadow: var(--shadow-button); }
 .paper-chip:disabled:not(.is-active) { opacity: 0.55; cursor: default; }
+
+/* 练听力 v2（follow-up）：难度条在播放卡上方，开始播放后整体变灰锁定 */
+.level-switch.is-locked { filter: grayscale(1); opacity: 0.6; }
+.level-switch.is-locked .level-seg { cursor: not-allowed; }
+.v2-replay-btn { height: 40px; padding: 0 18px; width: auto; font-size: var(--font-body); }
+.cmp-col.calm img { object-fit: cover; object-position: 78% 40%; border-radius: 12px; }
+.cmp-encourage { text-align: center; font-weight: 700; color: var(--color-text); }
